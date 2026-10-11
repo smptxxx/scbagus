@@ -35,7 +35,7 @@ safe_update() {
     local base_name=$(basename "$repo_path")
     local target_name="${base_name%.sh}"
     
-    local raw_url="https://raw.githubusercontent.com/WBVPN/WIBUTUNNEL/main/${repo_path}?$(date +%s)"
+    local raw_url="https://raw.githubusercontent.com/WBVPN/wibutunnel/main/${repo_path}?$(date +%s)"
     
     wget -q -O "/etc/wibutunnel/tmp/${base_name}" "$raw_url" 2>/dev/null
     if [[ -s "/etc/wibutunnel/tmp/${base_name}" ]]; then
