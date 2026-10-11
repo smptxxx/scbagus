@@ -26,7 +26,7 @@ fi
 clear
 echo -e "\e[1;36m[+] Memeriksa Lisensi Script...\e[0m"
 
-LINK_IZIN="https://raw.githubusercontent.com/WBVPN/wibutunnel/main/izin.txt"
+LINK_IZIN="https://raw.githubusercontent.com/smptxxx/scbagus/main/izin.txt"
 GET_DATA=$(curl -sS --max-time 10 $LINK_IZIN | grep -w "$MYIP")
 
 CLIENT_NAME=$(echo "$GET_DATA" | awk '{print $2}' | tr -d '\r' | tr -d ' ')
@@ -47,8 +47,8 @@ if [[ "$MYIP" == "$REGISTERED_IP" ]]; then
             echo -e "\e[1;33m Expired On  : $EXP_DATE\e[0m"
             echo -e "\e[1;31m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\e[0m"
             echo -e "\e[1;37m Silakan hubungi Admin untuk perpanjangan.\e[0m"
-            echo -e "\e[1;32m WhatsApp : 087757315408\e[0m"
-            echo -e "\e[1;36m Telegram : t.me/wibuvpn\e[0m"
+            echo -e "\e[1;32m WhatsApp : 6287835216661\e[0m"
+            echo -e "\e[1;36m Telegram : t.me/nexusweb_dev\e[0m"
             echo -e "\e[1;31m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\e[0m"
             exit 1
         fi
@@ -66,8 +66,8 @@ else
     exit 1
 fi
 
-GITHUB_USER="WBVPN"
-REPO_NAME="wibutunnel"
+GITHUB_USER="smptxxx"
+REPO_NAME="scbagus"
 GITHUB_RAW="https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main"
 
 clear

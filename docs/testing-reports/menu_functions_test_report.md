@@ -115,7 +115,7 @@ sync; echo 3 > /proc/sys/vm/drop_caches  # all caches
 ### [5] Update Script (Safe Mode) ✅
 **Status:** WORKING
 **Duration:** 4 seconds
-**Description:** Update scripts from GitHub WBVPN/wibutunnel repository
+**Description:** Update scripts from GitHub smptxxx/scbagus repository
 
 **Backup created:** /root/script_backup_1791516897 (3 files)
 

@@ -34,7 +34,7 @@ Bot successfully sent menu messages with inline keyboards:
 - `systemd/telegram-bot-polling.service` → `/etc/systemd/system/` (387B)
 - `docs/BOT_WEBHOOK_TO_POLLING.md` (migration guide)
 
-**GitHub commit:** [570fe5a](https://github.com/WBVPN/wibutunnel/commit/570fe5a)
+**GitHub commit:** [570fe5a](https://github.com/smptxxx/scbagus/commit/570fe5a)
 
 ## Migration Complete ✅
 

@@ -4,7 +4,7 @@
 
 **Multi-protocol VPN tunneling system dengan Telegram bot integration**
 
-[![GitHub](https://img.shields.io/badge/GitHub-WBVPN-blue?logo=github)](https://github.com/WBVPN/wibutunnel)
+[![GitHub](https://img.shields.io/badge/GitHub-smptxxx-blue?logo=github)](https://github.com/smptxxx/scbagus)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![OS](https://img.shields.io/badge/OS-Debian%2012%20|%20Ubuntu%2020.04+-orange.svg)]()
 [![Xray](https://img.shields.io/badge/Powered%20by-Xray--core-blueviolet)](https://github.com/XTLS/Xray-core)
@@ -23,7 +23,7 @@ Xray-based VPN management panel yang mudah digunakan, dilengkapi monitoring otom
 ## ⚡ Quick Start
 
 ```bash
-wget https://raw.githubusercontent.com/WBVPN/wibutunnel/main/setup.sh
+wget https://raw.githubusercontent.com/smptxxx/scbagus/main/setup.sh
 bash setup.sh
 ```
 
@@ -113,7 +113,7 @@ bash setup.sh
 
 ### Install
 ```bash
-wget https://raw.githubusercontent.com/WBVPN/wibutunnel/main/setup.sh
+wget https://raw.githubusercontent.com/smptxxx/scbagus/main/setup.sh
 bash setup.sh
 ```
 
@@ -179,7 +179,7 @@ menu → [5] Backup & Restore → [1] Backup
 - IP-based check via GitHub
 - Validated on install & script execution
 - Invalid IP/expired = access denied
-- License file: [izin.txt](https://github.com/WBVPN/wibutunnel/blob/main/izin.txt)
+- License file: [izin.txt](https://github.com/smptxxx/scbagus/blob/main/izin.txt)
 
 ### SSL Certificate
 - Auto-issued via Let's Encrypt
@@ -244,7 +244,7 @@ systemctl restart xray
 curl ipv4.icanhazip.com
 
 # Check license
-curl -s https://raw.githubusercontent.com/WBVPN/wibutunnel/main/izin.txt | grep "$(curl -s ipv4.icanhazip.com)"
+curl -s https://raw.githubusercontent.com/smptxxx/scbagus/main/izin.txt | grep "$(curl -s ipv4.icanhazip.com)"
 
 # Contact admin for registration
 ```
@@ -294,7 +294,7 @@ A: Tracking continues, preserved after unlock.
 ## 🤝 Contributing
 
 ```bash
-git clone https://github.com/WBVPN/wibutunnel.git
+git clone https://github.com/smptxxx/scbagus.git
 cd wibutunnel
 # Edit, test, commit
 ```
@@ -319,14 +319,14 @@ MIT License - free for personal & commercial use.
 
 ## 📞 Support
 
-- 🐛 **Issues:** https://github.com/WBVPN/wibutunnel/issues
-- 💬 **Discussions:** https://github.com/WBVPN/wibutunnel/discussions
-- 📧 **Email:** wibuvpnstore@gmail.com
+- 🐛 **Issues:** https://github.com/smptxxx/scbagus/issues
+- 💬 **Discussions:** https://github.com/smptxxx/scbagus/discussions
+- 📧 **Email:** nexuswebdev@gmail.com
 - 📁 **Test Reports:** [docs/testing-reports/](docs/testing-reports/)
 
 ---
 
 <p align="center">
-  <strong>Made with ❤️ by WBVPN Team</strong><br>
-  <a href="https://github.com/WBVPN/wibutunnel">⭐ Star us on GitHub!</a>
+  <strong>Made with ❤️ by NEXUSDEV Team</strong><br>
+  <a href="https://github.com/smptxxx/scbagus">⭐ Star us on GitHub!</a>
 </p>
