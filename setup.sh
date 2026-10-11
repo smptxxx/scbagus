@@ -294,8 +294,8 @@ else
     certbot certonly --standalone --register-unsafely-without-email --no-eff-email --agree-tos -d "$domain"
 fi
 
-if [ ! -f "/etc/letsencrypt/live/$domain/fullchain.pem" ]; then
-    echo -e "${RED}SSL GAGAL! Pastikan domain $domain mengarah ke IP ini.${NC}"
+if [ ! -f "/etc/letsencrypt/live/${domain}/fullchain.pem" ]; then
+    echo -e "${RED}SSL GAGAL! Pastikan domain ${domain} mengarah ke IP ini.${NC}"
     exit 1
 fi
 cat /etc/letsencrypt/live/"$domain"/fullchain.pem /etc/letsencrypt/live/"$domain"/privkey.pem > /etc/haproxy/certs/"$domain".pem
@@ -611,7 +611,7 @@ domain=$(cat /etc/xray/domain 2>/dev/null)
 [[ -z "$domain" ]] && exit 1
 systemctl stop haproxy
 certbot renew --quiet --no-self-upgrade --standalone
-cat /etc/letsencrypt/live/$domain/fullchain.pem /etc/letsencrypt/live/$domain/privkey.pem > /etc/haproxy/certs/$domain.pem
+cat "/etc/letsencrypt/live/${domain}/fullchain.pem" "/etc/letsencrypt/live/${domain}/privkey.pem" > "/etc/haproxy/certs/${domain}.pem"
 systemctl start haproxy
 RCEOF
 chmod +x /usr/local/bin/renew-cert-wibu.sh
@@ -676,9 +676,17 @@ systemctl is-active --quiet haproxy && echo -e "HAProxy Service     : \e[32m[OK]
 ss -tlnp | grep -q ":443" && echo -e "Port 443            : \e[32m[OK]\e[0m" || echo -e "Port 443            : \e[31m[FAIL]\e[0m"
 ss -tlnp | grep -q ":80" && echo -e "Port 80             : \e[32m[OK]\e[0m" || echo -e "Port 80             : \e[31m[FAIL]\e[0m"
 haproxy -c -f /etc/haproxy/haproxy.cfg >/dev/null 2>&1 && echo -e "HAProxy Config      : \e[32m[OK]\e[0m" || echo -e "HAProxy Config      : \e[31m[FAIL]\e[0m"
-[ -f /etc/haproxy/certs/$domain.pem ] && echo -e "SSL Certificate     : \e[32m[OK]\e[0m" || echo -e "SSL Certificate     : \e[31m[FAIL]\e[0m"
+[ -f "/etc/haproxy/certs/${domain}.pem" ] && echo -e "SSL Certificate     : \e[32m[OK]\e[0m" || echo -e "SSL Certificate     : \e[31m[FAIL]\e[0m"
 ss -tlnp | grep -q ":10085" && echo -e "Xray API (10085)    : \e[32m[OK]\e[0m" || echo -e "Xray API (10085)    : \e[33m[WARNING]\e[0m"
 systemctl is-active --quiet wibu-daemon && echo -e "Algojo Daemon       : \e[32m[OK]\e[0m" || echo -e "Algojo Daemon       : \e[31m[FAIL]\e[0m"
+
+echo ""
+echo -e "\e[1;33m[+] Securing file permissions...\e[0m"
+chmod 600 /etc/wibutunnel/bot.conf 2>/dev/null
+chmod 600 /etc/wibutunnel/*.db 2>/dev/null
+chmod 600 /etc/wibutunnel/lock.conf 2>/dev/null
+chmod 700 /etc/wibutunnel/tmp 2>/dev/null
+echo -e "\e[32m✓ Sensitive files secured\e[0m"
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "    INSTALASI SELESAI! REBOOT DALAM 8 DETIK...    "

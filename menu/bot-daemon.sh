@@ -856,7 +856,7 @@ if [[ -n "$CB_ID" ]]; then
                             TRF_MSG+="<b>${idx}.</b> <code>${usr}</code> [${proto_r}] : ${vol}\n"
                             ((idx++))
                             [[ $idx -gt 10 ]] && break
-                        done < <(awk -F':' '{ if ($1 ~ /^(vless|vmess|trojan)-(ws|grpc)-(tls|ntls)$/ || $1 ~ /^(vless|vmess|trojan)-grpc$/ || $1 == "api" || $1 == "direct" || $1 == "blocked") next; down=($2=="null"||$2=="")?0:$2; up=($3=="null"||$3=="")?0:$3; print (down+up)":"$1 }' /etc/wibutunnel/user_usage.db 2>/dev/null | sort -t: -k1 -nr)
+                        done < <(awk -F':' '{ if ($1 ~ /^(vless|vmess|trojan)-(ws|grpc)-(tls|ntls)$/ || $1 ~ /^(vless|vmess|trojan)-grpc$/ || $1 == "api" || $1 == "direct" || $1 == "blocked") next; down=($2=="null"||$2=="")?0:$2; up=($3=="null"||$3=="")?0:$3; printf "%.0f:%s\n", (down+up), $1 }' /etc/wibutunnel/user_usage.db 2>/dev/null | sort -t: -k1 -nr)
                         TRF_MSG+="━━━━━━━━━━━━━━━━━━━━"
                         kb='{"inline_keyboard":[[{"text":"🔙 Back to SYSTEM Menu","callback_data":"menu_system"}]]}'
                         send_msg "$TRF_MSG" "$kb"
@@ -924,6 +924,7 @@ else
                         else
                             # Call unlock function (will implement in next task)
                             unlock_user_manual "$proto" "$user"
+                        fi
                         ;;
                     trial)
                         waktu="$TEXT"

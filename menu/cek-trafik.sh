@@ -117,7 +117,7 @@ else
 
         ((online_count++))
 
-        raw_bytes=$(grep "^${user}:" "$DB_USAGE" | cut -d: -f2)
+        raw_bytes=$(awk -F: -v u="$user" '$1==u { down=($2=="null"||$2=="")?0:$2; up=($3=="null"||$3=="")?0:$3; printf "%.0f", (down+up); exit }' "$DB_USAGE" 2>/dev/null)
         [[ -z "$raw_bytes" ]] && raw_bytes=0
         usage_quota=$(convert_size "$raw_bytes")
 

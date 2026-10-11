@@ -178,6 +178,15 @@ case $sub_setting in
         safe_update "common.sh"
         
         dos2unix /usr/local/bin/* >/dev/null 2>&1
+        
+        # Fix permissions for security
+        echo -e "${YELLOW}Securing file permissions...${NC}"
+        chmod 600 /etc/wibutunnel/bot.conf 2>/dev/null
+        chmod 600 /etc/wibutunnel/*.db 2>/dev/null
+        chmod 600 /etc/wibutunnel/lock.conf 2>/dev/null
+        chmod 700 /etc/wibutunnel/tmp 2>/dev/null
+        echo -e "${GREEN}✓ Sensitive files secured${NC}"
+        
         systemctl restart wibutunnel-bot >/dev/null 2>&1
         echo -e "\n${GREEN}Update Selesai! Semua menu sudah versi terbaru.${NC}"
         read -n 1 -s -r -p "Tekan tombol apa saja..."
