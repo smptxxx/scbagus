@@ -47,10 +47,10 @@ echo -e " ${CYAN}RAM Use    :${NC} ${WHITE}${RAM_USED} MB / ${RAM_TOTAL} MB${NC}
 echo -e " ${CYAN}CPU Use    :${NC} ${WHITE}${CPU_USAGE}%${NC}"
 echo -e " ${CYAN}Services   :${NC} HAProxy [${st_hap}] ${WHITE}•${NC} Xray [${st_xry}]"
 echo -e "${LINE}"
-echo -e " ${GREEN}[1] Menu VLESS${NC}"
-echo -e " ${CYAN}[2] Menu VMESS${NC}"
-echo -e " ${YELLOW}[3] Menu TROJAN${NC}"
-echo -e " ${CYAN}[4] Menu SSH WebSocket (Dropbear 2019)${NC}"
+echo -e " ${GREEN}[1] Menu SSH WebSocket (Dropbear 2019)${NC}"
+echo -e " ${CYAN}[2] Menu VLESS${NC}"
+echo -e " ${YELLOW}[3] Menu VMESS${NC}"
+echo -e " ${CYAN}[4] Menu TROJAN${NC}"
 echo -e "${LINE}"
 echo -e " ${BLUE}[5] Setting Server${NC}"
 echo -e " ${CYAN}[6] Backup & Restore${NC}"
@@ -65,10 +65,10 @@ while true; do
     echo -ne "${WHITE}Pilih menu: ${NC}"
     read -r sub_menu
     case $sub_menu in
-        1) exec m-vless ;;
-        2) exec m-vmess ;;
-        3) exec m-trojan ;;
-        4) exec m-sshws ;;
+        1) exec m-sshws ;;
+        2) exec m-vless ;;
+        3) exec m-vmess ;;
+        4) exec m-trojan ;;
         5) exec m-setting ;;
         6) exec m-backup ;;
         0) clear; exit ;;
