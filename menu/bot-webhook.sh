@@ -2,7 +2,7 @@
 # [PATCH] Tambah validasi X-Telegram-Bot-Api-Secret-Token
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-source /etc/wibutunnel/bot.conf 2>/dev/null
+source /etc/nexustunnel/bot.conf 2>/dev/null
 WEBHOOK_SECRET="${WEBHOOK_SECRET:-}"
 
 shopt -s nocasematch

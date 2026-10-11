@@ -104,9 +104,9 @@ grep -v dummy /etc/xray/trojan_exp.conf # 1 user (test)
 
 #### ✅ NOT the Problem
 1. **Enforcer Scripts:**
-   - algojo-wibu: 103ms runtime, 31ms awk parsing
+   - algojo-nexus: 103ms runtime, 31ms awk parsing
    - algojo-kuota: runs in background
-   - unlocker-wibu: minimal resource usage
+   - unlocker-nexus: minimal resource usage
    - All use flock correctly (no concurrent runs)
 
 2. **System Resources:**
@@ -227,7 +227,7 @@ enforcement-status  # Quick status check
 **Key Operations:**
 - **Manual unlock (IP):** Remove from `locked_users.db`, remove from xray blocked routing, restart xray
 - **Manual unlock (QUOTA):** Same as IP OR increase quota limit and wait for next algojo-kuota run
-- **Check lock reason:** `grep username /etc/wibutunnel/locked_users.db`
+- **Check lock reason:** `grep username /etc/nexustunnel/locked_users.db`
 - **Disable enforcement:** `crontab -e` and comment out algojo lines
 - **Debug stats API:** `xray api statsquery --server=127.0.0.1:10085 | jq`
 
@@ -247,9 +247,9 @@ enforcement-status  # Quick status check
 
 | Component | Status | Details |
 |-----------|--------|---------|
-| **algojo-wibu** | ✅ Active | Every 2 min, IP enforcement |
+| **algojo-nexus** | ✅ Active | Every 2 min, IP enforcement |
 | **algojo-kuota** | ✅ Active | Every 5 min, bandwidth enforcement |
-| **unlocker-wibu** | ✅ Active | Every 1 min, auto-unlock |
+| **unlocker-nexus** | ✅ Active | Every 1 min, auto-unlock |
 | **Stats API** | ✅ Fixed | Per-user tracking enabled |
 | **Expiry Files** | ✅ Complete | VLESS/VMess/Trojan populated |
 | **Monitoring** | ✅ Deployed | Dashboard script available |
@@ -481,7 +481,7 @@ enforcement-status  # Quick status check
    - Display enforcer runtime metrics
 
 10. **Unified Enforcer** (LOW PRIORITY)
-    - Merge algojo-wibu and algojo-kuota into single script
+    - Merge algojo-nexus and algojo-kuota into single script
     - Reduce xray restarts (single restart per cycle)
     - Simplify cron configuration
 

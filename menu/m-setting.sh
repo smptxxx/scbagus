@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==========================================
-# WIBU TUNNELING - m-setting.sh (v4.0 KURUMI)
+# NEXUS TUNNELING - m-setting.sh (v4.0 NEXUS)
 # Security Patch: Anti-Symlink Update + Fix Format Waktu + Speedtest Repo
 # ==========================================
 
@@ -8,8 +8,8 @@ source /usr/local/bin/common.sh
 if ! command -v jq &> /dev/null; then apt-get install -y jq &>/dev/null; fi
 check_license
 
-source /etc/wibutunnel/bot.conf 2>/dev/null
-source /etc/wibutunnel/lock.conf 2>/dev/null || LOCK_DURATION=15
+source /etc/nexustunnel/bot.conf 2>/dev/null
+source /etc/nexustunnel/lock.conf 2>/dev/null || LOCK_DURATION=15
 
 if [[ -z "$BOT_TOKEN" ]]; then
     STATUS_TOKEN="${RED}Belum disetting${NC}"
@@ -37,9 +37,9 @@ safe_update() {
     
     local raw_url="https://raw.githubusercontent.com/smptxxx/scbagus/main/${repo_path}?$(date +%s)"
     
-    wget -q -O "/etc/wibutunnel/tmp/${base_name}" "$raw_url" 2>/dev/null
-    if [[ -s "/etc/wibutunnel/tmp/${base_name}" ]]; then
-        mv "/etc/wibutunnel/tmp/${base_name}" "/usr/local/bin/${target_name}"
+    wget -q -O "/etc/nexustunnel/tmp/${base_name}" "$raw_url" 2>/dev/null
+    if [[ -s "/etc/nexustunnel/tmp/${base_name}" ]]; then
+        mv "/etc/nexustunnel/tmp/${base_name}" "/usr/local/bin/${target_name}"
         chmod +x "/usr/local/bin/${target_name}"
         echo -e "${GREEN}√ Berhasil memperbarui ${target_name}${NC}"
     else
@@ -170,10 +170,10 @@ case $sub_setting in
         safe_update "menu/bot-daemon.sh"
         
         safe_update "sbin/algojo-kuota"
-        safe_update "sbin/algojo-wibu"
+        safe_update "sbin/algojo-nexus"
         safe_update "sbin/lock-user"
         safe_update "sbin/unlock-user"
-        safe_update "sbin/unlocker-wibu"
+        safe_update "sbin/unlocker-nexus"
         
         safe_update "common.sh"
         
@@ -181,20 +181,20 @@ case $sub_setting in
         
         # Fix permissions for security
         echo -e "${YELLOW}Securing file permissions...${NC}"
-        chmod 600 /etc/wibutunnel/bot.conf 2>/dev/null
-        chmod 600 /etc/wibutunnel/*.db 2>/dev/null
-        chmod 600 /etc/wibutunnel/lock.conf 2>/dev/null
-        chmod 700 /etc/wibutunnel/tmp 2>/dev/null
+        chmod 600 /etc/nexustunnel/bot.conf 2>/dev/null
+        chmod 600 /etc/nexustunnel/*.db 2>/dev/null
+        chmod 600 /etc/nexustunnel/lock.conf 2>/dev/null
+        chmod 700 /etc/nexustunnel/tmp 2>/dev/null
         echo -e "${GREEN}✓ Sensitive files secured${NC}"
         
-        systemctl restart wibutunnel-bot >/dev/null 2>&1
+        systemctl restart nexustunnel-bot >/dev/null 2>&1
         echo -e "\n${GREEN}Update Selesai! Semua menu sudah versi terbaru.${NC}"
         read -n 1 -s -r -p "Tekan tombol apa saja..."
         exec m-setting
         ;;
     6)
         clear; echo -e "$LINE"; echo -e "         ${WHITE}SETUP BOT TELEGRAM${NC}"; echo -e "$LINE"
-        source /etc/wibutunnel/bot.conf 2>/dev/null
+        source /etc/nexustunnel/bot.conf 2>/dev/null
         wh_socket=$(systemctl is-active telegram-webhook.socket 2>/dev/null)
         if [[ -n "$BOT_TOKEN" && "$wh_socket" == "active" ]]; then
             text_sts="${GREEN}Aktif & Berjalan${NC}"
@@ -214,12 +214,12 @@ case $sub_setting in
                 read -p "Masukkan CHAT ID   : " input_chatid
                 if [[ -n "$input_token" && -n "$input_chatid" ]]; then
                     WEBHOOK_SECRET=$(head -c 32 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 32)
-                    cat <<EOF > /etc/wibutunnel/bot.conf
+                    cat <<EOF > /etc/nexustunnel/bot.conf
 BOT_TOKEN="${input_token}"
 CHAT_ID="${input_chatid}"
 WEBHOOK_SECRET="${WEBHOOK_SECRET}"
 EOF
-                    chmod 600 /etc/wibutunnel/bot.conf
+                    chmod 600 /etc/nexustunnel/bot.conf
                     domain=$(cat /etc/xray/domain 2>/dev/null)
                     systemctl enable --now telegram-webhook.socket >/dev/null 2>&1
                     curl -s -X POST "https://api.telegram.org/bot${input_token}/setWebhook" \
@@ -227,19 +227,19 @@ EOF
                         -F "secret_token=${WEBHOOK_SECRET}" >/dev/null 2>&1
                     curl -s -X POST "https://api.telegram.org/bot${input_token}/sendMessage" \
                         -d "chat_id=${input_chatid}" \
-                        -d "text=🤖 Bot Wibu Tunneling Berhasil Terhubung!" >/dev/null 2>&1
+                        -d "text=🤖 Bot Nexus Tunneling Berhasil Terhubung!" >/dev/null 2>&1
                     echo -e "${GREEN}Bot berhasil disimpan, diaktifkan & webhook disetel!${NC}"
                 fi
                 ;;
             2)
-                source /etc/wibutunnel/bot.conf 2>/dev/null
+                source /etc/nexustunnel/bot.conf 2>/dev/null
                 if [[ -z "$BOT_TOKEN" ]]; then
                     echo -e "${RED}[!] BOT TOKEN belum dikonfigurasi. Pilih opsi [1] dahulu.${NC}"
                 else
                     domain=$(cat /etc/xray/domain 2>/dev/null)
                     if [[ -z "$WEBHOOK_SECRET" ]]; then
                         WEBHOOK_SECRET=$(head -c 32 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 32)
-                        echo "WEBHOOK_SECRET=\"${WEBHOOK_SECRET}\"" >> /etc/wibutunnel/bot.conf
+                        echo "WEBHOOK_SECRET=\"${WEBHOOK_SECRET}\"" >> /etc/nexustunnel/bot.conf
                     fi
                     systemctl enable --now telegram-webhook.socket >/dev/null 2>&1
                     curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook" \
@@ -249,7 +249,7 @@ EOF
                 fi
                 ;;
             3)
-                source /etc/wibutunnel/bot.conf 2>/dev/null
+                source /etc/nexustunnel/bot.conf 2>/dev/null
                 if [[ -n "$BOT_TOKEN" ]]; then
                     curl -s "https://api.telegram.org/bot${BOT_TOKEN}/deleteWebhook" >/dev/null 2>&1
                 fi
@@ -308,7 +308,7 @@ EOF
             sleep 2
             exec m-setting
         fi
-        echo "LOCK_DURATION=$new_duration" > /etc/wibutunnel/lock.conf
+        echo "LOCK_DURATION=$new_duration" > /etc/nexustunnel/lock.conf
         echo -e "${GREEN}Berhasil! Durasi lock diubah menjadi ${new_duration} menit.${NC}"
         read -p "Tekan Enter..." dummy
         exec m-setting

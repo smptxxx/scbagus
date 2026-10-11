@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🚀 Wibutunnel v4.0 KURUMI
+# 🚀 Nexustunnel v4.0 NEXUS
 
 **Multi-protocol VPN tunneling system dengan Telegram bot integration**
 
@@ -215,7 +215,7 @@ menu → [6] Update Script
 ## 🗑️ Uninstall
 
 ```bash
-cd /root/wibutunnel
+cd /root/nexustunnel
 bash uninstall-complete.sh
 # Complete removal → VPS returns to fresh state
 ```
@@ -275,7 +275,7 @@ A: Tracking continues, preserved after unlock.
 
 ## 📜 Changelog
 
-### v4.0 KURUMI (October 2026)
+### v4.0 NEXUS (October 2026)
 - ✅ Bot Polling Migration (webhook → polling)
 - ✅ Manual Lock/Unlock per protocol
 - ✅ Username uniqueness (cross-protocol)
@@ -295,7 +295,7 @@ A: Tracking continues, preserved after unlock.
 
 ```bash
 git clone https://github.com/smptxxx/scbagus.git
-cd wibutunnel
+cd nexustunnel
 # Edit, test, commit
 ```
 

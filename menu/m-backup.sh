@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==========================================
-# WIBU TUNNELING - m-backup.sh (v4.0 KURUMI)
+# NEXUS TUNNELING - m-backup.sh (v4.0 NEXUS)
 # Fixed: license check tidak membunuh cron job, logging, PATH
 # ==========================================
 
@@ -9,15 +9,15 @@ export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 source /usr/local/bin/common.sh
 if ! command -v jq &> /dev/null; then apt-get install -y jq &>/dev/null; fi
 
-source /etc/wibutunnel/bot.conf 2>/dev/null
+source /etc/nexustunnel/bot.conf 2>/dev/null
 
 IP_VPS="${MYIP:-$(curl -sS --max-time 5 ipv4.icanhazip.com)}"
 [[ -z "$IP_VPS" ]] && IP_VPS="Unknown"
 
-VPS_NAME="PROJECT-WIBU"
-BACKUP_DIR="/etc/wibutunnel/tmp"
+VPS_NAME="PROJECT-NEXUS"
+BACKUP_DIR="/etc/nexustunnel/tmp"
 mkdir -p "$BACKUP_DIR"
-LOG_FILE="/var/log/wibu-backup.log"
+LOG_FILE="/var/log/nexus-backup.log"
 DOMAIN_VPS=$(cat /etc/xray/domain 2>/dev/null || echo "Unknown")
 
 # ===== AUTO BACKUP (via Cron) =====
@@ -43,10 +43,10 @@ if [[ "$1" == "auto" ]]; then
         etc/xray/vless_exp.conf \
         etc/xray/vmess_exp.conf \
         etc/xray/trojan_exp.conf \
-        etc/wibutunnel/limit_ip.db \
-        etc/wibutunnel/limit_bw.db \
-        etc/wibutunnel/locked_users.db \
-        etc/wibutunnel/user_usage.db \
+        etc/nexustunnel/limit_ip.db \
+        etc/nexustunnel/limit_bw.db \
+        etc/nexustunnel/locked_users.db \
+        etc/nexustunnel/user_usage.db \
         etc/xray/domain 2>/dev/null
 
     if [[ ! -f "$BACKUP_FILE" ]]; then
@@ -55,7 +55,7 @@ if [[ "$1" == "auto" ]]; then
     fi
 
     TGL=$(date "+%Y-%m-%d %H:%M:%S")
-    CAPTION=$(echo -e "📦 <b>Backup Wibutunnel VPS</b>\n🗓 Tanggal: <code>${TGL}</code>\n\n<i>File dienkripsi menggunakan CHAT ID Anda.</i>")
+    CAPTION=$(echo -e "📦 <b>Backup Nexustunnel VPS</b>\n🗓 Tanggal: <code>${TGL}</code>\n\n<i>File dienkripsi menggunakan CHAT ID Anda.</i>")
 
     RESPONSE=$(curl -s --max-time 30 -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendDocument" \
         -F "chat_id=${CHAT_ID}" \
@@ -67,7 +67,7 @@ if [[ "$1" == "auto" ]]; then
     MSG_ID=$(echo "$RESPONSE" | jq -r '.result.message_id // empty')
     
     if [[ -n "$FILE_ID" && -n "$MSG_ID" ]]; then
-        NEW_CAPTION=$(echo -e "📦 <b>Backup Wibutunnel VPS</b>\n🗓 Tanggal: <code>${TGL}</code>\n\n🔑 <b>DATA RESTORE:</b>\n<code>${FILE_ID}</code>\n\n🔐 <b>Password:</b> CHAT ID Anda")
+        NEW_CAPTION=$(echo -e "📦 <b>Backup Nexustunnel VPS</b>\n🗓 Tanggal: <code>${TGL}</code>\n\n🔑 <b>DATA RESTORE:</b>\n<code>${FILE_ID}</code>\n\n🔐 <b>Password:</b> CHAT ID Anda")
         curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/editMessageCaption" \
             -F "chat_id=${CHAT_ID}" \
             -F "message_id=${MSG_ID}" \
@@ -109,10 +109,10 @@ do_backup() {
         etc/xray/vless_exp.conf \
         etc/xray/vmess_exp.conf \
         etc/xray/trojan_exp.conf \
-        etc/wibutunnel/limit_ip.db \
-        etc/wibutunnel/limit_bw.db \
-        etc/wibutunnel/locked_users.db \
-        etc/wibutunnel/user_usage.db \
+        etc/nexustunnel/limit_ip.db \
+        etc/nexustunnel/limit_bw.db \
+        etc/nexustunnel/locked_users.db \
+        etc/nexustunnel/user_usage.db \
         etc/xray/domain 2>/dev/null
 
     if [[ ! -f "$BACKUP_FILE" ]]; then
@@ -124,7 +124,7 @@ do_backup() {
     echo -e "${YELLOW}[+] Mengirim ke Telegram...${NC}"
 
     TGL=$(date "+%Y-%m-%d %H:%M:%S")
-    CAPTION=$(echo -e "📦 <b>Backup Wibutunnel VPS</b>\n🗓 Tanggal: <code>${TGL}</code>\n\n<i>File dienkripsi menggunakan CHAT ID Anda.</i>")
+    CAPTION=$(echo -e "📦 <b>Backup Nexustunnel VPS</b>\n🗓 Tanggal: <code>${TGL}</code>\n\n<i>File dienkripsi menggunakan CHAT ID Anda.</i>")
 
     RESPONSE=$(curl -s --max-time 30 -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendDocument" \
         -F "chat_id=${CHAT_ID}" \
@@ -138,7 +138,7 @@ do_backup() {
         MSG_ID=$(echo "$RESPONSE" | jq -r '.result.message_id // empty')
         
         if [[ -n "$FILE_ID" && -n "$MSG_ID" ]]; then
-            NEW_CAPTION=$(echo -e "📦 <b>Backup Wibutunnel VPS</b>\n🗓 Tanggal: <code>${TGL}</code>\n\n🔑 <b>DATA RESTORE:</b>\n<code>${FILE_ID}</code>\n\n🔐 <b>Password:</b> CHAT ID Anda")
+            NEW_CAPTION=$(echo -e "📦 <b>Backup Nexustunnel VPS</b>\n🗓 Tanggal: <code>${TGL}</code>\n\n🔑 <b>DATA RESTORE:</b>\n<code>${FILE_ID}</code>\n\n🔐 <b>Password:</b> CHAT ID Anda")
             curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/editMessageCaption" \
                 -F "chat_id=${CHAT_ID}" \
                 -F "message_id=${MSG_ID}" \
@@ -211,14 +211,14 @@ do_restore() {
     echo -e "${GREEN}[+] Backup valid. Membersihkan data lama...${NC}"
     rm -f /usr/local/etc/xray/config.json
     rm -f /etc/xray/vless_exp.conf /etc/xray/vmess_exp.conf /etc/xray/trojan_exp.conf
-    rm -f /etc/wibutunnel/limit_ip.db /etc/wibutunnel/limit_bw.db /etc/wibutunnel/locked_users.db /etc/wibutunnel/user_usage.db
+    rm -f /etc/nexustunnel/limit_ip.db /etc/nexustunnel/limit_bw.db /etc/nexustunnel/locked_users.db /etc/nexustunnel/user_usage.db
     rm -f /etc/xray/domain
 
     cp -a "${BACKUP_DIR}/restore-tmp/usr/local/etc/xray/config.json" /usr/local/etc/xray/ 2>/dev/null
     cp -a "${BACKUP_DIR}/restore-tmp/etc/xray/"*.conf /etc/xray/ 2>/dev/null
-    cp -a "${BACKUP_DIR}/restore-tmp/etc/wibutunnel/"*.db /etc/wibutunnel/ 2>/dev/null
+    cp -a "${BACKUP_DIR}/restore-tmp/etc/nexustunnel/"*.db /etc/nexustunnel/ 2>/dev/null
     cp -a "${BACKUP_DIR}/restore-tmp/etc/xray/domain" /etc/xray/ 2>/dev/null
-    chmod 600 /etc/wibutunnel/*.db 2>/dev/null
+    chmod 600 /etc/nexustunnel/*.db 2>/dev/null
     rm -rf "${BACKUP_DIR}/restore-tmp"
 
     systemctl restart xray haproxy cron >/dev/null 2>&1
@@ -245,7 +245,7 @@ do_autobackup() {
     fi
 
     crontab -l 2>/dev/null | grep -v "/usr/local/bin/m-backup auto" | crontab -
-    (crontab -l 2>/dev/null; echo "0 $input_jam * * * /usr/local/bin/m-backup auto >> /var/log/wibu-backup.log 2>&1") | crontab -
+    (crontab -l 2>/dev/null; echo "0 $input_jam * * * /usr/local/bin/m-backup auto >> /var/log/nexus-backup.log 2>&1") | crontab -
     systemctl restart cron
 
     printf -v tampil_jam "%02d" "$input_jam"

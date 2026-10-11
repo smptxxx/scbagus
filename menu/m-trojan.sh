@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==========================================
-# WIBU TUNNELING - m-trojan.sh (v4.0 KURUMI)
+# NEXUS TUNNELING - m-trojan.sh (v4.0 NEXUS)
 # [FIX] jq exact match + THICKLINE encoding fix
 # ==========================================
 
@@ -8,13 +8,13 @@ source /usr/local/bin/common.sh
 if ! command -v jq &> /dev/null; then apt-get install -y jq &>/dev/null; fi
 check_license_silent
 
-source /etc/wibutunnel/bot.conf 2>/dev/null
+source /etc/nexustunnel/bot.conf 2>/dev/null
 CONFIG_FILE="/usr/local/etc/xray/config.json"
 DOMAIN_FILE="/etc/xray/domain"
 EXP_FILE="/etc/xray/trojan_exp.conf"
-DB_IP="/etc/wibutunnel/limit_ip.db"
-DB_BW="/etc/wibutunnel/limit_bw.db"
-DB_LOCK="/etc/wibutunnel/locked_users.db"
+DB_IP="/etc/nexustunnel/limit_ip.db"
+DB_BW="/etc/nexustunnel/limit_bw.db"
+DB_LOCK="/etc/nexustunnel/locked_users.db"
 
 THICKLINE="----------------------------------------"
 
@@ -252,7 +252,7 @@ delete_user() {
 
     safe_sed_delete "$user" "$EXP_FILE"
     safe_sed_delete "$user" "$DB_IP"; safe_sed_delete "$user" "$DB_BW"
-    safe_sed_delete "$user" "$DB_LOCK"; safe_sed_delete "$user" /etc/wibutunnel/user_usage.db
+    safe_sed_delete "$user" "$DB_LOCK"; safe_sed_delete "$user" /etc/nexustunnel/user_usage.db
     systemctl restart xray >/dev/null 2>&1
     echo ""; read -p "Tekan Enter..." dummy
 }
@@ -416,7 +416,7 @@ lock_unlock_user() {
     [[ -z "$SELECTED_USER" ]] && return
     user="$SELECTED_USER"
 
-    DB_LOCK="/etc/wibutunnel/locked_users.db"
+    DB_LOCK="/etc/nexustunnel/locked_users.db"
     now=$(date +%s)
 
     if grep -q "^${user}:" "$DB_LOCK" 2>/dev/null; then

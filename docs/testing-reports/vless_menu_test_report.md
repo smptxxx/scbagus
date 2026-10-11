@@ -32,8 +32,8 @@
 ```
 UUID: a5710edd-6f8d-4d60-acf2-e9cbc864b733
 Expiry file: /etc/xray/vless_exp.conf ✓
-Limit IP DB: /etc/wibutunnel/limit_ip.db ✓
-Limit BW DB: /etc/wibutunnel/limit_bw.db ✓
+Limit IP DB: /etc/nexustunnel/limit_ip.db ✓
+Limit BW DB: /etc/nexustunnel/limit_bw.db ✓
 Config file: /usr/local/etc/xray/vless-tls-testuser01.json (720 bytes) ✓
 Connection link: vless://a5710edd...@aku.priasawit.web.id:443 ✓
 Xray status: active ✓
@@ -133,10 +133,10 @@ Expiry file updated ✓
 ```
 Before: testuser01:2
 After: testuser01:5 ✓
-Database: /etc/wibutunnel/limit_ip.db updated ✓
+Database: /etc/nexustunnel/limit_ip.db updated ✓
 ```
 
-**Note:** Enforcer script (`algojo-wibu`) not found on VPS but DB updated correctly
+**Note:** Enforcer script (`algojo-nexus`) not found on VPS but DB updated correctly
 
 ---
 
@@ -151,7 +151,7 @@ Database: /etc/wibutunnel/limit_ip.db updated ✓
 ```
 Before: testuser01:50
 After: testuser01:100 ✓
-Database: /etc/wibutunnel/limit_bw.db updated ✓
+Database: /etc/nexustunnel/limit_bw.db updated ✓
 ```
 
 ---
@@ -184,7 +184,7 @@ Active connections: 0 (expected - no client connected) ✓
 Lock:   testuser01:2026-10-10 ✓
 Unlock: Entry removed from DB ✓
 Lock:   testuser01:2026-10-10 ✓
-Database: /etc/wibutunnel/locked_users.db ✓
+Database: /etc/nexustunnel/locked_users.db ✓
 ```
 
 **Functionality:** Manual access control working, timestamp recorded
@@ -232,7 +232,7 @@ m-vless create --user testuser --days 30 --ip-limit 2 --quota 50
 
 ### 3. Missing Enforcer Scripts (WARNING)
 **Impact:** IP/quota limits not enforced automatically  
-**Missing:** `/usr/local/bin/algojo-wibu`, `/usr/local/bin/algojo-kuota`  
+**Missing:** `/usr/local/bin/algojo-nexus`, `/usr/local/bin/algojo-kuota`  
 **Status:** Limit databases update correctly, but no active enforcement  
 **Recommendation:** Verify enforcer scripts exist and are scheduled in cron
 
@@ -257,14 +257,14 @@ recoverytest  - UUID 45f91ac7-73d6-481e-a28a-9aa7bf03c107
 ### Services
 - **Xray:** active (v26.3.27)
 - **HAProxy:** active (ports 80, 443)
-- **Telegram Bot:** active (@wibutunnelbot)
+- **Telegram Bot:** active (@nexustunnelbot)
 
 ### Files Modified
 - `/usr/local/etc/xray/config.json` - User configurations
 - `/etc/xray/vless_exp.conf` - Expiry tracking
-- `/etc/wibutunnel/limit_ip.db` - IP limits
-- `/etc/wibutunnel/limit_bw.db` - Bandwidth limits
-- `/etc/wibutunnel/locked_users.db` - Lock status
+- `/etc/nexustunnel/limit_ip.db` - IP limits
+- `/etc/nexustunnel/limit_bw.db` - Bandwidth limits
+- `/etc/nexustunnel/locked_users.db` - Lock status
 - `/usr/local/etc/xray/vless-tls-*.json` - Per-user config files
 
 ---
@@ -274,7 +274,7 @@ recoverytest  - UUID 45f91ac7-73d6-481e-a28a-9aa7bf03c107
 ### High Priority
 1. **Add CLI mode to menu scripts** - Enable non-interactive automation
 2. **Fix renew date calculation** - Extend from existing expiry, not current date
-3. **Verify enforcer scripts** - Ensure algojo-wibu/algojo-kuota are installed and active
+3. **Verify enforcer scripts** - Ensure algojo-nexus/algojo-kuota are installed and active
 
 ### Medium Priority
 4. **Update reload to restart** - Replace systemctl reload with restart in menu scripts

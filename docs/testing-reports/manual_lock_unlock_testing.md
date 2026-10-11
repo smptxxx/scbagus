@@ -10,7 +10,7 @@
 | Username uniqueness | ✅ PASS | Duplicate rejected across protocols |
 | Lock function | ✅ PASS | MANUAL_LOCK created, xray routing updated |
 | Unlock function | ✅ PASS | Removed from DB & routing, bandwidth preserved |
-| Auto-unlock prevention | ✅ PASS | MANUAL_LOCK skipped by unlocker-wibu |
+| Auto-unlock prevention | ✅ PASS | MANUAL_LOCK skipped by unlocker-nexus |
 | All protocols | ✅ PASS | VLESS, VMESS, TROJAN working |
 | Bandwidth tracking | ✅ PASS | Tracked during lock, preserved after unlock |
 
@@ -37,7 +37,7 @@
 ### Test 4: Auto-Unlock Prevention
 - Created manualtest with MANUAL_LOCK (unlock_timestamp=0)
 - Created temptest with IP_LIMIT (unlock_timestamp in 90s)
-- Waited 2 minutes for unlocker-wibu cron
+- Waited 2 minutes for unlocker-nexus cron
 - ✅ manualtest still locked (MANUAL_LOCK preserved)
 - ✅ temptest auto-unlocked (temporary lock worked)
 

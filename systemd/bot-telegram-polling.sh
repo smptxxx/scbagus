@@ -1,16 +1,16 @@
 #!/bin/bash
-# WIBUTUNNEL TELEGRAM BOT - POLLING MODE v4.1
+# NEXUSTUNNEL TELEGRAM BOT - POLLING MODE v4.1
 # Migrated from webhook to polling for better reliability
 
-BOT_CONF="/etc/wibutunnel/bot.conf"
-OFFSET_FILE="/etc/wibutunnel/tmp/bot_offset"
+BOT_CONF="/etc/nexustunnel/bot.conf"
+OFFSET_FILE="/etc/nexustunnel/tmp/bot_offset"
 
 # Load config
 [[ ! -f "$BOT_CONF" ]] && { echo "Bot config not found"; exit 1; }
 source "$BOT_CONF"
 [[ -z "$BOT_TOKEN" ]] && { echo "BOT_TOKEN not set"; exit 1; }
 
-mkdir -p /etc/wibutunnel/tmp
+mkdir -p /etc/nexustunnel/tmp
 OFFSET=$(cat "$OFFSET_FILE" 2>/dev/null || echo "0")
 
 echo "[$(date)] Bot polling started, offset: $OFFSET"

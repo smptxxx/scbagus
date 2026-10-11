@@ -142,14 +142,14 @@ sync; echo 3 > /proc/sys/vm/drop_caches  # all caches
 **Description:** Configure and manage Telegram bot
 
 **Configuration:**
-- Config file: /etc/wibutunnel/bot.conf ✅
+- Config file: /etc/nexustunnel/bot.conf ✅
 - Bot Token: 8918... (46 characters)
 - Chat ID: 5851934765
 - Webhook Secret: P5Viq2Pe... (32 characters)
 
 **Bot API test:**
 - Connectivity: ✅ OK
-- Bot username: @wibutunnelbot
+- Bot username: @nexustunnelbot
 - Response time: <1s
 
 **Webhook status:**
@@ -173,7 +173,7 @@ sync; echo 3 > /proc/sys/vm/drop_caches  # all caches
 
 **Auto Backup (bonus verification):**
 - Auto Backup: ✅ Scheduled at 3:00 WIB daily
-- Crontab entry: `0 3 * * * /usr/local/bin/m-backup auto >> /var/log/wibu-backup.log 2>&1`
+- Crontab entry: `0 3 * * * /usr/local/bin/m-backup auto >> /var/log/nexus-backup.log 2>&1`
 - Last backup: 2026-10-09 09:50:05
 
 **Result:** ✅ Auto reboot configured and functional
@@ -211,7 +211,7 @@ sync; echo 3 > /proc/sys/vm/drop_caches  # all caches
 **Duration:** <1 second
 **Description:** Configure automatic user lock duration
 
-**Configuration file:** /etc/wibutunnel/lock.conf
+**Configuration file:** /etc/nexustunnel/lock.conf
 
 **Test sequence:**
 1. Initial state: Config not found
@@ -237,7 +237,7 @@ sync; echo 3 > /proc/sys/vm/drop_caches  # all caches
 | [3] Speedtest | 31s | ✅ | 413 Mbps down, 4759 Mbps up |
 | [4] vnStat | 10s | ✅ | Realtime stats working |
 | [5] Update Script | 4s | ✅ | 4 scripts updated from GitHub |
-| [6] Bot Telegram | 1s | ✅ | @wibutunnelbot operational |
+| [6] Bot Telegram | 1s | ✅ | @nexustunnelbot operational |
 | [7] Auto Reboot | <1s | ✅ | Scheduled 5:00 WIB daily |
 | [8] SSL Renewal | 17s | ⚠️ | Cert valid 89 days, renewal needs service stop |
 | [9] Lock Duration | <1s | ✅ | Config persistent, change test OK |
@@ -282,7 +282,7 @@ Tools: speedtest, vnStat installed
 
 ### Issue 3: Lock Config Missing
 **Status:** RESOLVED
-**Solution:** Created /etc/wibutunnel/lock.conf with default 15 menit
+**Solution:** Created /etc/nexustunnel/lock.conf with default 15 menit
 **Duration:** Included in <1s test time
 
 ### Issue 4: SSL Renewal Port 80 Blocked
@@ -336,7 +336,7 @@ systemctl start haproxy
 ```
 
 **All status fields verified:** ✅
-- Bot Telegram: Active (@wibutunnelbot)
+- Bot Telegram: Active (@nexustunnelbot)
 - ID Telegram: 5851934765 (correct)
 - Auto Reboot: 05:00 WIB (cron confirmed)
 - Auto Backup: 03:00 WIB (cron confirmed)

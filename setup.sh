@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==========================================
-# MASTER INSTALLER WIBU TUNNELING - v4.0 KURUMI
+# MASTER INSTALLER NEXUS TUNNELING - v4.0 NEXUS
 # Zero-Lag Queue Daemon + Security Patch + Recovery System
 # ==========================================
 
@@ -72,7 +72,7 @@ GITHUB_RAW="https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main"
 
 clear
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "     STARTING INSTALL WIBU TUNNELING (FINAL)      "
+echo "     STARTING INSTALL NEXUS TUNNELING (FINAL)      "
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # [NEW] DISABLE IPV6 SECARA PERMANEN (CEGAH APT/XRAY ERROR)
@@ -140,13 +140,13 @@ apt-get update -y >/dev/null 2>&1
 apt-get install -y ntp dnsutils >/dev/null 2>&1
 systemctl enable --now ntp >/dev/null 2>&1
 
-mkdir -p /etc/xray /usr/local/etc/xray /etc/haproxy/certs /etc/wibutunnel /etc/wibutunnel/tmp
-chmod 700 /etc/wibutunnel /etc/wibutunnel/tmp
+mkdir -p /etc/xray /usr/local/etc/xray /etc/haproxy/certs /etc/nexustunnel /etc/nexustunnel/tmp
+chmod 700 /etc/nexustunnel /etc/nexustunnel/tmp
 echo "$domain" > /etc/xray/domain
 echo "$domain" > /root/domain
 
 # [PATCH VERSION] Teks versi yang akan tampil di Dashboard
-echo "4.0 Kurumi" > /etc/wibutunnel/version
+echo "4.0 Nexus" > /etc/nexustunnel/version
 
 # Dummy users
 echo "dummy-tls:Lifetime" > /etc/xray/vless_exp.conf
@@ -443,17 +443,17 @@ GITHUB_RAW="https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main"
 download_menu() {
     local url="${GITHUB_RAW}/$1?v=$RANDOM"
     local dest="/usr/local/bin/$2"
-    curl -sS -L -o "/etc/wibutunnel/tmp/$2" "$url"
+    curl -sS -L -o "/etc/nexustunnel/tmp/$2" "$url"
     
     # Validasi apakah file yang diunduh adalah bash script (bukan HTML 429 Error)
-    if grep -q "429: Too Many Requests" "/etc/wibutunnel/tmp/$2"; then
+    if grep -q "429: Too Many Requests" "/etc/nexustunnel/tmp/$2"; then
         echo -e "\e[31m[!] Terkena Rate Limit GitHub saat mengunduh $2. Mencoba mirror lain...\e[0m"
         url="https://cdn.jsdelivr.net/gh/${GITHUB_USER}/${REPO_NAME}@main/$1"
-        curl -sS -L -o "/etc/wibutunnel/tmp/$2" "$url"
+        curl -sS -L -o "/etc/nexustunnel/tmp/$2" "$url"
     fi
     
-    if [ -s "/etc/wibutunnel/tmp/$2" ]; then
-        mv "/etc/wibutunnel/tmp/$2" "$dest"
+    if [ -s "/etc/nexustunnel/tmp/$2" ]; then
+        mv "/etc/nexustunnel/tmp/$2" "$dest"
         chmod +x "$dest"
     else
         echo -e "\e[31m[!] Gagal mengunduh $2\e[0m"
@@ -479,20 +479,20 @@ download_menu "menu/bot-webhook.sh" "bot-webhook"
 # =========================================================
 # SISTEM RECOVERY CENTER & ALGOJO MONITOR (v4.0 PERFECT)
 # =========================================================
-touch /etc/wibutunnel/locked_users.db /etc/wibutunnel/limit_ip.db /etc/wibutunnel/limit_bw.db /etc/wibutunnel/user_usage.db
-chmod 600 /etc/wibutunnel/*.db
+touch /etc/nexustunnel/locked_users.db /etc/nexustunnel/limit_ip.db /etc/nexustunnel/limit_bw.db /etc/nexustunnel/user_usage.db
+chmod 600 /etc/nexustunnel/*.db
 
 
 # Scripts lock-user, unlock-user, algojo, unlocker diunduh dari repo (versi patched)
 # Download sbin scripts (source of truth — patched versions)
-download_menu "sbin/algojo-wibu" "algojo-wibu-dl"
+download_menu "sbin/algojo-nexus" "algojo-nexus-dl"
 download_menu "sbin/algojo-kuota" "algojo-kuota-dl"
 download_menu "sbin/lock-user" "lock-user-dl"
 download_menu "sbin/unlock-user" "unlock-user-dl"
-download_menu "sbin/unlocker-wibu" "unlocker-wibu-dl"
+download_menu "sbin/unlocker-nexus" "unlocker-nexus-dl"
 
 # Install sbin scripts
-for s in algojo-wibu algojo-kuota lock-user unlock-user unlocker-wibu; do
+for s in algojo-nexus algojo-kuota lock-user unlock-user unlocker-nexus; do
     if [ -f "/usr/local/bin/${s}-dl" ]; then
         mv "/usr/local/bin/${s}-dl" "/usr/local/sbin/${s}"
         chmod +x "/usr/local/sbin/${s}"
@@ -507,24 +507,24 @@ for s in lock-user unlock-user; do
 done
 
 
-# WIBU DAEMON
-cat << 'WDEOF' > /usr/local/bin/wibu-daemon
+# NEXUS DAEMON
+cat << 'WDEOF' > /usr/local/bin/nexus-daemon
 #!/bin/bash
 while true; do
-    /usr/local/sbin/algojo-wibu >/dev/null 2>&1
+    /usr/local/sbin/algojo-nexus >/dev/null 2>&1
     /usr/local/sbin/algojo-kuota >/dev/null 2>&1
     sleep 10
 done
 WDEOF
-chmod +x /usr/local/bin/wibu-daemon
+chmod +x /usr/local/bin/nexus-daemon
 
-cat << 'EOF' > /etc/systemd/system/wibu-daemon.service
+cat << 'EOF' > /etc/systemd/system/nexus-daemon.service
 [Unit]
-Description=Wibu Tunneling Real-Time Algojo Daemon
+Description=Nexus Tunneling Real-Time Algojo Daemon
 After=network.target
 
 [Service]
-ExecStart=/usr/local/bin/wibu-daemon
+ExecStart=/usr/local/bin/nexus-daemon
 Restart=always
 RestartSec=3
 
@@ -555,15 +555,15 @@ StandardOutput=socket
 User=root
 EOF
 
-chmod +x /usr/local/bin/wibu-daemon
-chmod +x /usr/local/sbin/algojo-wibu 2>/dev/null || true
+chmod +x /usr/local/bin/nexus-daemon
+chmod +x /usr/local/sbin/algojo-nexus 2>/dev/null || true
 chmod +x /usr/local/sbin/algojo-kuota 2>/dev/null || true
 chmod +x /usr/local/bin/bot-daemon
 chmod +x /usr/local/bin/bot-webhook
 
 systemctl daemon-reload
-systemctl enable wibu-daemon >/dev/null 2>&1
-systemctl restart wibu-daemon
+systemctl enable nexus-daemon >/dev/null 2>&1
+systemctl restart nexus-daemon
 
 systemctl enable --now telegram-webhook.socket >/dev/null 2>&1
 
@@ -594,18 +594,18 @@ chmod +x /usr/local/bin/watchdog.sh
 
 systemctl enable cron >/dev/null 2>&1
 
-crontab -l 2>/dev/null | grep -v -E "xp|reboot|watchdog|algojo|unlocker|drop_caches|renew-cert-wibu" | crontab -
+crontab -l 2>/dev/null | grep -v -E "xp|reboot|watchdog|algojo|unlocker|drop_caches|renew-cert-nexus" | crontab -
 (crontab -l 2>/dev/null; echo "* * * * * /usr/local/bin/watchdog.sh") | crontab -
 (crontab -l 2>/dev/null; echo "* * * * * /usr/local/bin/xp") | crontab -
 (crontab -l 2>/dev/null; echo "0 5 * * * /sbin/reboot") | crontab -
 (crontab -l 2>/dev/null; echo "0 0 * * * sync; echo 3 > /proc/sys/vm/drop_caches && swapoff -a && swapon -a") | crontab -
-(crontab -l 2>/dev/null; echo "* * * * * /usr/local/sbin/unlocker-wibu") | crontab -
+(crontab -l 2>/dev/null; echo "* * * * * /usr/local/sbin/unlocker-nexus") | crontab -
 # [FIX] Add algojo enforcement cron schedules (IP limit every 2min, quota every 5min)
-(crontab -l 2>/dev/null; echo "*/2 * * * * /usr/local/sbin/algojo-wibu") | crontab -
+(crontab -l 2>/dev/null; echo "*/2 * * * * /usr/local/sbin/algojo-nexus") | crontab -
 (crontab -l 2>/dev/null; echo "*/5 * * * * /usr/local/sbin/algojo-kuota") | crontab -
 
 # SSL Auto Renewal
-cat > /usr/local/bin/renew-cert-wibu.sh << 'RCEOF'
+cat > /usr/local/bin/renew-cert-nexus.sh << 'RCEOF'
 #!/bin/bash
 domain=$(cat /etc/xray/domain 2>/dev/null)
 [[ -z "$domain" ]] && exit 1
@@ -614,8 +614,8 @@ certbot renew --quiet --no-self-upgrade --standalone
 cat "/etc/letsencrypt/live/${domain}/fullchain.pem" "/etc/letsencrypt/live/${domain}/privkey.pem" > "/etc/haproxy/certs/${domain}.pem"
 systemctl start haproxy
 RCEOF
-chmod +x /usr/local/bin/renew-cert-wibu.sh
-(crontab -l 2>/dev/null; echo "0 4 * * * /usr/local/bin/renew-cert-wibu.sh") | crontab -
+chmod +x /usr/local/bin/renew-cert-nexus.sh
+(crontab -l 2>/dev/null; echo "0 4 * * * /usr/local/bin/renew-cert-nexus.sh") | crontab -
 
 # Service Override
 mkdir -p /etc/systemd/system/haproxy.service.d /etc/systemd/system/xray.service.d
@@ -638,22 +638,22 @@ systemctl start cron
 systemctl restart xray haproxy
 
 # [FIX] Create bot.conf with secure permissions before use
-mkdir -p /etc/wibutunnel
-cat > /etc/wibutunnel/bot.conf << 'BOTCONF'
+mkdir -p /etc/nexustunnel
+cat > /etc/nexustunnel/bot.conf << 'BOTCONF'
 # Telegram Bot Configuration
 # Set your bot token and chat ID here
 BOT_TOKEN=""
 CHAT_ID=""
 BOTCONF
-chmod 600 /etc/wibutunnel/bot.conf
+chmod 600 /etc/nexustunnel/bot.conf
 
 # Set Webhook URL to Telegram
-source /etc/wibutunnel/bot.conf 2>/dev/null
+source /etc/nexustunnel/bot.conf 2>/dev/null
 if [[ -n "$BOT_TOKEN" ]]; then
     # Generate webhook secret jika belum ada
     if [[ -z "$WEBHOOK_SECRET" ]]; then
         WEBHOOK_SECRET=$(head -c 32 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 32)
-        echo "WEBHOOK_SECRET='${WEBHOOK_SECRET}'" >> /etc/wibutunnel/bot.conf
+        echo "WEBHOOK_SECRET='${WEBHOOK_SECRET}'" >> /etc/nexustunnel/bot.conf
     fi
     curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook" \
         -F "url=https://${domain}/telehook" \
@@ -678,14 +678,14 @@ ss -tlnp | grep -q ":80" && echo -e "Port 80             : \e[32m[OK]\e[0m" || e
 haproxy -c -f /etc/haproxy/haproxy.cfg >/dev/null 2>&1 && echo -e "HAProxy Config      : \e[32m[OK]\e[0m" || echo -e "HAProxy Config      : \e[31m[FAIL]\e[0m"
 [ -f "/etc/haproxy/certs/${domain}.pem" ] && echo -e "SSL Certificate     : \e[32m[OK]\e[0m" || echo -e "SSL Certificate     : \e[31m[FAIL]\e[0m"
 ss -tlnp | grep -q ":10085" && echo -e "Xray API (10085)    : \e[32m[OK]\e[0m" || echo -e "Xray API (10085)    : \e[33m[WARNING]\e[0m"
-systemctl is-active --quiet wibu-daemon && echo -e "Algojo Daemon       : \e[32m[OK]\e[0m" || echo -e "Algojo Daemon       : \e[31m[FAIL]\e[0m"
+systemctl is-active --quiet nexus-daemon && echo -e "Algojo Daemon       : \e[32m[OK]\e[0m" || echo -e "Algojo Daemon       : \e[31m[FAIL]\e[0m"
 
 echo ""
 echo -e "\e[1;33m[+] Securing file permissions...\e[0m"
-chmod 600 /etc/wibutunnel/bot.conf 2>/dev/null
-chmod 600 /etc/wibutunnel/*.db 2>/dev/null
-chmod 600 /etc/wibutunnel/lock.conf 2>/dev/null
-chmod 700 /etc/wibutunnel/tmp 2>/dev/null
+chmod 600 /etc/nexustunnel/bot.conf 2>/dev/null
+chmod 600 /etc/nexustunnel/*.db 2>/dev/null
+chmod 600 /etc/nexustunnel/lock.conf 2>/dev/null
+chmod 700 /etc/nexustunnel/tmp 2>/dev/null
 echo -e "\e[32m✓ Sensitive files secured\e[0m"
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

@@ -1,5 +1,5 @@
 #!/bin/bash
-# WIBU TUNNELING - recovery center (v4.0 KURUMI)
+# NEXUS TUNNELING - recovery center (v4.0 NEXUS)
 # Akses: menu-recovery [VLESS|VMESS|TROJAN]
 source /usr/local/bin/common.sh
 check_license
@@ -7,7 +7,7 @@ check_license
 RED='\e[1;31m'; GREEN='\e[1;32m'; CYAN='\e[1;36m'; YELLOW='\e[1;33m'; WHITE='\e[1;37m'; BLUE='\e[34m'; NC='\e[0m'
 LINE="${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
-DB_LOCK="/etc/wibutunnel/locked_users.db"
+DB_LOCK="/etc/nexustunnel/locked_users.db"
 
 if [[ -n "$1" ]] && [[ "$1" =~ ^(VLESS|VMESS|TROJAN)$ ]]; then
     FILTER_PROTO="$1"; proto_lower="${FILTER_PROTO,,}"
@@ -50,7 +50,7 @@ for line in "${locked_list[@]}"; do
     proto="${USER_PROTOS[$u]}"
     [[ -n "$FILTER_PROTO" && "$proto" != "$FILTER_PROTO" ]] && continue
     if [[ -z "$proto" ]]; then
-        safe_sed_delete "$u" "$DB_LOCK"; safe_sed_delete "$u" /etc/wibutunnel/user_usage.db
+        safe_sed_delete "$u" "$DB_LOCK"; safe_sed_delete "$u" /etc/nexustunnel/user_usage.db
         safe_jq_edit_args --arg user "$u" '(.routing.rules[] | select(.user != null and .outboundTag == "blocked") | .user) |= map(select(. != $user))'
         GHOST_FOUND=true; continue
     fi
@@ -93,12 +93,12 @@ if [[ "$target" == "deleteallusers" ]]; then
         safe_sed_delete "$user" /etc/xray/vless_exp.conf
         safe_sed_delete "$user" /etc/xray/vmess_exp.conf
         safe_sed_delete "$user" /etc/xray/trojan_exp.conf
-        safe_sed_delete "$user" /etc/wibutunnel/limit_ip.db
-        safe_sed_delete "$user" /etc/wibutunnel/limit_bw.db
-        safe_sed_delete "$user" /etc/wibutunnel/locked_users.db
-        safe_sed_delete "$user" /etc/wibutunnel/user_usage.db
+        safe_sed_delete "$user" /etc/nexustunnel/limit_ip.db
+        safe_sed_delete "$user" /etc/nexustunnel/limit_bw.db
+        safe_sed_delete "$user" /etc/nexustunnel/locked_users.db
+        safe_sed_delete "$user" /etc/nexustunnel/user_usage.db
     done
-    > /etc/wibutunnel/locked_users.db
+    > /etc/nexustunnel/locked_users.db
     systemctl restart xray >/dev/null 2>&1
     echo -e "\n ${GREEN}SEMUA AKUN RECOVERY TELAH DIMUSNAHKAN PERMANEN!${NC}"
     read -p " Tekan Enter..." dummy
@@ -122,12 +122,12 @@ new_exp=$(date -d "+${hari_baru} days" +"%Y-%m-%d %H:%M:%S"); proto="${USER_PROT
 [[ "$proto" == "VMESS" ]]  && { safe_sed_delete "$user" /etc/xray/vmess_exp.conf; echo "${user}:${new_exp}" >> /etc/xray/vmess_exp.conf; }
 [[ "$proto" == "TROJAN" ]] && { safe_sed_delete "$user" /etc/xray/trojan_exp.conf; echo "${user}:${new_exp}" >> /etc/xray/trojan_exp.conf; }
 
-safe_sed_delete "$user" /etc/wibutunnel/limit_ip.db; echo "${user}:${ip_baru}" >> /etc/wibutunnel/limit_ip.db
-safe_sed_delete "$user" /etc/wibutunnel/limit_bw.db; echo "${user}:${bw_baru}" >> /etc/wibutunnel/limit_bw.db
-safe_sed_delete "$user" /etc/wibutunnel/user_usage.db
+safe_sed_delete "$user" /etc/nexustunnel/limit_ip.db; echo "${user}:${ip_baru}" >> /etc/nexustunnel/limit_ip.db
+safe_sed_delete "$user" /etc/nexustunnel/limit_bw.db; echo "${user}:${bw_baru}" >> /etc/nexustunnel/limit_bw.db
+safe_sed_delete "$user" /etc/nexustunnel/user_usage.db
 
 safe_jq_edit_args --arg u "$user" '(.routing.rules[] | select(.user != null and .outboundTag == "blocked") | .user) |= map(select(. != $u))'
-safe_sed_delete "$user" /etc/wibutunnel/locked_users.db; systemctl restart xray >/dev/null 2>&1
+safe_sed_delete "$user" /etc/nexustunnel/locked_users.db; systemctl restart xray >/dev/null 2>&1
 
 echo -e "\n ${GREEN}BERHASIL! Akun ${user} telah aktif kembali.${NC}"
 read -p " Tekan Enter..."; [[ -n "$FILTER_PROTO" ]] && exec "m-${proto_lower}" || exec menu

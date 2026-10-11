@@ -22,11 +22,11 @@
 
 | Script | Size | Purpose | Status |
 |--------|------|---------|--------|
-| `algojo-wibu` | 3.3K | IP limit enforcer | ✅ Working |
+| `algojo-nexus` | 3.3K | IP limit enforcer | ✅ Working |
 | `algojo-kuota` | 3.4K | Bandwidth enforcer | ✅ Working |
-| `unlocker-wibu` | 713B | Auto-unlock expired locks | ✅ Working |
+| `unlocker-nexus` | 713B | Auto-unlock expired locks | ✅ Working |
 
-**Version:** v4.0 Kurumi with flock patches  
+**Version:** v4.0 Nexus with flock patches  
 **Permissions:** All executable (rwxr-xr-x)
 
 ---
@@ -35,8 +35,8 @@
 
 | Script | Frequency | Last Run |
 |--------|-----------|----------|
-| `unlocker-wibu` | Every 1 minute | Active |
-| `algojo-wibu` | Every 2 minutes | Active |
+| `unlocker-nexus` | Every 1 minute | Active |
+| `algojo-nexus` | Every 2 minutes | Active |
 | `algojo-kuota` | Every 5 minutes | Active |
 
 **Root crontab verified:** All 3 enforcers scheduled correctly  
@@ -46,7 +46,7 @@
 
 ### ✅ Database Structure
 
-**Location:** `/etc/wibutunnel/` (permissions: drwx------)
+**Location:** `/etc/nexustunnel/` (permissions: drwx------)
 
 | Database | Entries | Format | Purpose |
 |----------|---------|--------|---------|
@@ -87,7 +87,7 @@ recoverytest:11811160064:11811160064
 **Evidence:**
 ```
 Lock entry: testuser01:1791595894:1791596794:IP_LIMIT
-Unlock time: +15 minutes (configurable via /etc/wibutunnel/lock.conf)
+Unlock time: +15 minutes (configurable via /etc/nexustunnel/lock.conf)
 Blocked routing: ✓ Added to xray blocked rule
 Telegram notification: ✓ Sent to configured chat
 ```
@@ -144,7 +144,7 @@ Blocked routing (all 3 users):
 ```
 
 **Protocol Detection:**
-- Algojo-wibu detects protocol by checking existence in:
+- Algojo-nexus detects protocol by checking existence in:
   - `/etc/xray/vless_exp.conf` → VLESS
   - `/etc/xray/vmess_exp.conf` → VMESS
   - `/etc/xray/trojan_exp.conf` → TROJAN
@@ -208,12 +208,12 @@ inbound>>>vmess-ws-tls>>>traffic>>>downlink: null
 
 **Analysis:**
 - Log file size: 112K, 1236 lines (not large)
-- Hang occurred during `awk` processing in algojo-wibu test
+- Hang occurred during `awk` processing in algojo-nexus test
 - VPS recovered automatically after timeout
 
 **Possible Causes:**
 - Resource spike during awk/grep operations
-- Concurrent algojo-wibu runs (flock should prevent this)
+- Concurrent algojo-nexus runs (flock should prevent this)
 - Network instability at provider level
 
 **Mitigation:**
@@ -247,7 +247,7 @@ wc -l /etc/xray/trojan_exp.conf # 0 lines
 
 ## Enforcement Workflow
 
-### IP Limit Enforcement (algojo-wibu - Every 2 Minutes)
+### IP Limit Enforcement (algojo-nexus - Every 2 Minutes)
 
 ```
 1. Acquire flock on /var/lock/algojo.lock
@@ -269,8 +269,8 @@ wc -l /etc/xray/trojan_exp.conf # 0 lines
 5. Release flock
 ```
 
-**Lock Duration:** 15 minutes (configurable via `/etc/wibutunnel/lock.conf`)  
-**Auto-Unlock:** Handled by `unlocker-wibu` (checks every 1 minute)
+**Lock Duration:** 15 minutes (configurable via `/etc/nexustunnel/lock.conf`)  
+**Auto-Unlock:** Handled by `unlocker-nexus` (checks every 1 minute)
 
 ---
 
@@ -307,7 +307,7 @@ wc -l /etc/xray/trojan_exp.conf # 0 lines
 
 ---
 
-### Auto-Unlock (unlocker-wibu - Every 1 Minute)
+### Auto-Unlock (unlocker-nexus - Every 1 Minute)
 
 ```
 1. Read locked_users.db
@@ -361,7 +361,7 @@ wc -l /etc/xray/trojan_exp.conf # 0 lines
 ### Services Status
 - **Xray:** active (v26.3.27)
 - **HAProxy:** active (ports 80, 443)
-- **Telegram Bot:** active (@wibutunnelbot)
+- **Telegram Bot:** active (@nexustunnelbot)
 - **Enforcer Crons:** active (last run: 08:35 WIB)
 
 ---
@@ -394,7 +394,7 @@ Domain   : aku.priasawit.web.id
 Account akan otomatis dibuka jika dilonggarkan limitnya.
 ```
 
-**Bot Config:** `/etc/wibutunnel/bot.conf`  
+**Bot Config:** `/etc/nexustunnel/bot.conf`  
 **Chat ID:** Configured (notifications delivered successfully during test)
 
 ---
@@ -453,7 +453,7 @@ Account akan otomatis dibuka jika dilonggarkan limitnya.
    - Add button to unlock user directly from Telegram
 
 10. **Consolidate Enforcer Scripts**
-    - Merge algojo-wibu and algojo-kuota into single enforcer
+    - Merge algojo-nexus and algojo-kuota into single enforcer
     - Single cron job, single restart (reduce xray restarts)
 
 ---

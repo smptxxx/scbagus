@@ -26,7 +26,7 @@
 ### Previous Bot Responses
 Bot successfully sent menu messages with inline keyboards:
 - Message IDs: 998, 999, 1018, 1019, 1022
-- "WIBUTUNNEL PANEL BOT" menu
+- "NEXUSTUNNEL PANEL BOT" menu
 - Buttons: VLESS, VMESS, TROJAN, SYSTEM
 
 ### Files Deployed from GitHub

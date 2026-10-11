@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==========================================
-# WIBU TUNNELING - cek-trafik.sh (v1.1 Kurumi)
+# NEXUS TUNNELING - cek-trafik.sh (v1.1 Nexus)
 # Spesifik per Protokol & Fast Query
 # ==========================================
 
@@ -16,10 +16,10 @@ BLUE='\e[34m'
 NC='\e[0m'
 LINE="${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
-DB_IP="/etc/wibutunnel/limit_ip.db"
-DB_BW="/etc/wibutunnel/limit_bw.db"
-DB_LOCK="/etc/wibutunnel/locked_users.db"
-DB_USAGE="/etc/wibutunnel/user_usage.db"
+DB_IP="/etc/nexustunnel/limit_ip.db"
+DB_BW="/etc/nexustunnel/limit_bw.db"
+DB_LOCK="/etc/nexustunnel/locked_users.db"
+DB_USAGE="/etc/nexustunnel/user_usage.db"
 
 # Mata Elang: Menangkap jenis protokol yang dilempar dari menu
 PROTOCOL_FILTER=${1^^}
@@ -144,7 +144,7 @@ else
     fi
 fi
 
-rm -f /etc/wibutunnel/tmp/recent_log.txt
+rm -f /etc/nexustunnel/tmp/recent_log.txt
 echo -e " ${WHITE}Tekan Enter untuk kembali...${NC}"
 read -r
 

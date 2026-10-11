@@ -1,6 +1,6 @@
 # Testing Reports
 
-Comprehensive testing documentation for WibuTunnel enforcement system.
+Comprehensive testing documentation for NexusTunnel enforcement system.
 
 ## Reports
 

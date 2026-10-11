@@ -24,7 +24,7 @@ Fitur manual lock/unlock per protocol (VLESS, VMESS, TROJAN) untuk mengontrol ak
 - Telegram notification sent
 
 ### 4. Auto-Unlock Prevention
-- unlocker-wibu skips MANUAL_LOCK entries (unlock_timestamp=0)
+- unlocker-nexus skips MANUAL_LOCK entries (unlock_timestamp=0)
 - Only IP_LIMIT (temporary) locks auto-unlock
 
 ## Bot Menu

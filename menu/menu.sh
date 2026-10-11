@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==========================================
-# WIBU TUNNELING - menu.sh (v4.0 KURUMI)
+# NEXUS TUNNELING - menu.sh (v4.0 NEXUS)
 # ==========================================
 
 source /usr/local/bin/common.sh
@@ -10,16 +10,16 @@ IP_SERVER="${MYIP:-$(curl -sS ipv4.icanhazip.com)}"
 OS_SYSTEM=$(grep PRETTY_NAME /etc/os-release | awk -F '"' '{print $2}')
 
 # Pindah ke tmp terisolasi
-curl -s "http://ip-api.com/line/?fields=city,isp" > /etc/wibutunnel/tmp/ipapi.txt
-CITY=$(sed -n '1p' /etc/wibutunnel/tmp/ipapi.txt)
-ISP=$(sed -n '2p' /etc/wibutunnel/tmp/ipapi.txt)
+curl -s "http://ip-api.com/line/?fields=city,isp" > /etc/nexustunnel/tmp/ipapi.txt
+CITY=$(sed -n '1p' /etc/nexustunnel/tmp/ipapi.txt)
+ISP=$(sed -n '2p' /etc/nexustunnel/tmp/ipapi.txt)
 [[ -z "$CITY" ]] && CITY="Unknown"
 [[ -z "$ISP" ]] && ISP="Unknown"
 
-if [ -f /etc/wibutunnel/version ]; then
-    SCRIPT_VER=$(cat /etc/wibutunnel/version)
+if [ -f /etc/nexustunnel/version ]; then
+    SCRIPT_VER=$(cat /etc/nexustunnel/version)
 else
-    SCRIPT_VER="4.0 Kurumi"
+    SCRIPT_VER="4.0 Nexus"
 fi
 
 UPTIME=$(uptime -p | sed 's/up //')
@@ -35,7 +35,7 @@ st_xry=$(systemctl is-active --quiet xray && echo "ON" || echo "OFF")
 
 clear
 echo -e "${LINE}"
-echo -e "               ${WHITE}WIBU TUNNELING${NC}"
+echo -e "               ${WHITE}NEXUS TUNNELING${NC}"
 echo -e "${LINE}"
 echo -e " ${CYAN}ISP        :${NC} ${WHITE}${ISP}${NC}"
 echo -e " ${CYAN}City       :${NC} ${WHITE}${CITY}${NC}"

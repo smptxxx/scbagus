@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==========================================
-# WIBU TUNNELING - menu-unlock.sh (v4.0 KURUMI)
+# NEXUS TUNNELING - menu-unlock.sh (v4.0 NEXUS)
 # Support: menu-unlock VLESS|VMESS|TROJAN (per-protocol mode)
 #          menu-unlock (global mode, all protocols)
 # ==========================================
@@ -17,7 +17,7 @@ BLUE='\e[34m'
 NC='\e[0m'
 LINE="${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
-DB_LOCK="/etc/wibutunnel/locked_users.db"
+DB_LOCK="/etc/nexustunnel/locked_users.db"
 
 # Detect protocol mode
 if [[ -n "$1" ]] && [[ "$1" =~ ^(VLESS|VMESS|TROJAN)$ ]]; then
@@ -108,7 +108,7 @@ for line in "${locked_list[@]}"; do
     
     if [[ -z "$proto" ]]; then
         safe_sed_delete "$u" "$DB_LOCK"
-        safe_sed_delete "$u" /etc/wibutunnel/user_usage.db
+        safe_sed_delete "$u" /etc/nexustunnel/user_usage.db
         safe_jq_edit_args --arg user "$u" '(.routing.rules[] | select(.user != null and .outboundTag == "blocked") | .user) |= map(select(. != $user))'
         GHOST_FOUND=true
         continue
@@ -197,15 +197,15 @@ if [[ "$proto" == "TROJAN" ]]; then
     echo "${user}:${new_exp}" >> /etc/xray/trojan_exp.conf
 fi
 
-safe_sed_delete "$user" /etc/wibutunnel/limit_ip.db
-echo "${user}:${ip_baru}" >> /etc/wibutunnel/limit_ip.db
-safe_sed_delete "$user" /etc/wibutunnel/limit_bw.db
-echo "${user}:${bw_baru}" >> /etc/wibutunnel/limit_bw.db
-safe_sed_delete "$user" /etc/wibutunnel/user_usage.db
+safe_sed_delete "$user" /etc/nexustunnel/limit_ip.db
+echo "${user}:${ip_baru}" >> /etc/nexustunnel/limit_ip.db
+safe_sed_delete "$user" /etc/nexustunnel/limit_bw.db
+echo "${user}:${bw_baru}" >> /etc/nexustunnel/limit_bw.db
+safe_sed_delete "$user" /etc/nexustunnel/user_usage.db
 
 # UNLOCK DARI XRAY
 safe_jq_edit_args --arg u "$user" '(.routing.rules[] | select(.user != null and .outboundTag == "blocked") | .user) |= map(select(. != $u))'
-safe_sed_delete "$user" /etc/wibutunnel/locked_users.db
+safe_sed_delete "$user" /etc/nexustunnel/locked_users.db
 systemctl restart xray >/dev/null 2>&1
 
 echo -e "\n ${GREEN}BERHASIL! Akun ${user} telah aktif kembali.${NC}"

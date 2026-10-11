@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==========================================
-# WIBU TUNNELING - menu-lock.sh (v4.0 KURUMI)
+# NEXUS TUNNELING - menu-lock.sh (v4.0 NEXUS)
 # Support: menu-lock VLESS|VMESS|TROJAN (per-protocol mode)
 #          menu-lock (global mode, auto-detect)
 # ==========================================
@@ -9,10 +9,10 @@ source /usr/local/bin/common.sh
 if ! command -v jq &> /dev/null; then apt-get install -y jq &>/dev/null; fi
 check_license
 
-source /etc/wibutunnel/bot.conf 2>/dev/null
+source /etc/nexustunnel/bot.conf 2>/dev/null
 CONFIG_FILE="/usr/local/etc/xray/config.json"
-DB_IP="/etc/wibutunnel/limit_ip.db"
-DB_LOCK="/etc/wibutunnel/locked_users.db"
+DB_IP="/etc/nexustunnel/limit_ip.db"
+DB_LOCK="/etc/nexustunnel/locked_users.db"
 
 # Detect protocol mode
 if [[ -n "$1" ]] && [[ "$1" =~ ^(VLESS|VMESS|TROJAN)$ ]]; then

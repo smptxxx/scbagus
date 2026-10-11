@@ -1,13 +1,13 @@
 #!/bin/bash
-# WIBUTUNNEL TELEGRAM BOT DAEMON (BASH) - v4.0 Kurumi
+# NEXUSTUNNEL TELEGRAM BOT DAEMON (BASH) - v4.0 Nexus
 # Seringan kapas, secepat kilat.
 
-BOT_CONF="/etc/wibutunnel/bot.conf"
+BOT_CONF="/etc/nexustunnel/bot.conf"
 source /usr/local/bin/common.sh 2>/dev/null
-OFFSET_FILE="/etc/wibutunnel/tmp/bot_offset"
+OFFSET_FILE="/etc/nexustunnel/tmp/bot_offset"
 CONFIG_FILE="/usr/local/etc/xray/config.json"
 
-mkdir -p /etc/wibutunnel/tmp
+mkdir -p /etc/nexustunnel/tmp
 touch $OFFSET_FILE
 
 get_random_quote() {
@@ -41,13 +41,13 @@ send_msg() {
             --data-urlencode "disable_web_page_preview=true" \
             --data-urlencode "parse_mode=html" \
             --data-urlencode "text=${text}" \
-            --data-urlencode "reply_markup=${keyboard}" >> /etc/wibutunnel/tmp/bot_error.log 2>&1
+            --data-urlencode "reply_markup=${keyboard}" >> /etc/nexustunnel/tmp/bot_error.log 2>&1
     else
         curl -s --max-time 10 -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
             --data-urlencode "chat_id=${target_id}" \
             --data-urlencode "disable_web_page_preview=true" \
             --data-urlencode "parse_mode=html" \
-            --data-urlencode "text=${text}" >> /etc/wibutunnel/tmp/bot_error.log 2>&1
+            --data-urlencode "text=${text}" >> /etc/nexustunnel/tmp/bot_error.log 2>&1
     fi
 }
 
@@ -63,7 +63,7 @@ edit_msg() {
         --data-urlencode "disable_web_page_preview=true" \
         --data-urlencode "parse_mode=html" \
         --data-urlencode "text=${text}" \
-        --data-urlencode "reply_markup=${keyboard}" >> /etc/wibutunnel/tmp/bot_error.log 2>&1
+        --data-urlencode "reply_markup=${keyboard}" >> /etc/nexustunnel/tmp/bot_error.log 2>&1
 }
 
 format_online_users() {
@@ -147,14 +147,14 @@ lock_user_manual() {
     fi
     
     # Check if already locked
-    if grep -q "^${username}:" /etc/wibutunnel/locked_users.db 2>/dev/null; then
+    if grep -q "^${username}:" /etc/nexustunnel/locked_users.db 2>/dev/null; then
         send_msg "⚠️ <b>User ${username} sudah dalam status locked!</b>" '{"inline_keyboard":[[{"text":"🔙 Back","callback_data":"menu_'${proto,,}'"}]]}'
         return 1
     fi
     
     # Add to locked_users.db with MANUAL_LOCK type (permanent lock: unlock_timestamp=0)
     local now=$(date +%s)
-    echo "${username}:${now}:0:MANUAL_LOCK" >> /etc/wibutunnel/locked_users.db
+    echo "${username}:${now}:0:MANUAL_LOCK" >> /etc/nexustunnel/locked_users.db
     
     # Block user in xray routing
     CONFIG_FILE="/usr/local/etc/xray/config.json"
@@ -179,17 +179,17 @@ unlock_user_manual() {
     local username="$2"
     
     # Check if user is locked
-    if ! grep -q "^${username}:" /etc/wibutunnel/locked_users.db 2>/dev/null; then
+    if ! grep -q "^${username}:" /etc/nexustunnel/locked_users.db 2>/dev/null; then
         send_msg "⚠️ <b>User ${username} tidak dalam status locked!</b>" '{"inline_keyboard":[[{"text":"🔙 Back","callback_data":"menu_'${proto,,}'"}]]}'
         return 1
     fi
     
     # Get lock info before removing
-    local lock_info=$(grep "^${username}:" /etc/wibutunnel/locked_users.db | head -1)
+    local lock_info=$(grep "^${username}:" /etc/nexustunnel/locked_users.db | head -1)
     local lock_type=$(echo "$lock_info" | cut -d: -f4)
     
     # Remove from locked_users.db
-    sed -i "/^${username}:/d" /etc/wibutunnel/locked_users.db
+    sed -i "/^${username}:/d" /etc/nexustunnel/locked_users.db
     
     # Remove from xray routing
     CONFIG_FILE="/usr/local/etc/xray/config.json"
@@ -284,8 +284,8 @@ create_account() {
         link2="trojan://${uuid}@${domain}:443?mode=gun&security=tls&type=grpc&serviceName=trojan&sni=${domain}#${user}"
     fi
 
-    echo "${user}:${limit_ip}" >> /etc/wibutunnel/limit_ip.db
-    echo "${user}:${limit_bw}" >> /etc/wibutunnel/limit_bw.db
+    echo "${user}:${limit_ip}" >> /etc/nexustunnel/limit_ip.db
+    echo "${user}:${limit_bw}" >> /etc/nexustunnel/limit_bw.db
     systemctl restart xray >/dev/null 2>&1
 
     [[ "$limit_ip" -eq 0 ]] && limit_ip="Bebas" || limit_ip="${limit_ip} IP"
@@ -372,10 +372,10 @@ delete_account() {
     safe_sed_delete "$user" /etc/xray/vless_exp.conf
     safe_sed_delete "$user" /etc/xray/vmess_exp.conf
     safe_sed_delete "$user" /etc/xray/trojan_exp.conf
-    safe_sed_delete "$user" /etc/wibutunnel/limit_ip.db
-    safe_sed_delete "$user" /etc/wibutunnel/limit_bw.db
-    safe_sed_delete "$user" /etc/wibutunnel/locked_users.db
-    safe_sed_delete "$user" /etc/wibutunnel/user_usage.db
+    safe_sed_delete "$user" /etc/nexustunnel/limit_ip.db
+    safe_sed_delete "$user" /etc/nexustunnel/limit_bw.db
+    safe_sed_delete "$user" /etc/nexustunnel/locked_users.db
+    safe_sed_delete "$user" /etc/nexustunnel/user_usage.db
 
     systemctl restart xray >/dev/null 2>&1
     
@@ -389,8 +389,8 @@ is_admin() {
     if [[ "$id" == "$CHAT_ID" ]]; then
         return 0
     fi
-    if [[ -f /etc/wibutunnel/bot_admins.db ]]; then
-        if grep -q "^${id}$" /etc/wibutunnel/bot_admins.db; then
+    if [[ -f /etc/nexustunnel/bot_admins.db ]]; then
+        if grep -q "^${id}$" /etc/nexustunnel/bot_admins.db; then
             return 0
         fi
     fi
@@ -472,12 +472,12 @@ change_limit() {
     fi
     
     # Update IP
-    safe_sed_delete "$user" /etc/wibutunnel/limit_ip.db
-    echo "${user}:${limit_ip}" >> /etc/wibutunnel/limit_ip.db
+    safe_sed_delete "$user" /etc/nexustunnel/limit_ip.db
+    echo "${user}:${limit_ip}" >> /etc/nexustunnel/limit_ip.db
     
     # Update BW
-    safe_sed_delete "$user" /etc/wibutunnel/limit_bw.db
-    echo "${user}:${limit_bw}" >> /etc/wibutunnel/limit_bw.db
+    safe_sed_delete "$user" /etc/nexustunnel/limit_bw.db
+    echo "${user}:${limit_bw}" >> /etc/nexustunnel/limit_bw.db
     
     local ip_str="Bebas"; [[ "$limit_ip" -ne 0 ]] && ip_str="${limit_ip} IP"
     local bw_str="Unlimited"; [[ "$limit_bw" -ne 0 ]] && bw_str="${limit_bw} GB"
@@ -493,8 +493,8 @@ list_account() {
     
     get_limits() {
         local u=$1
-        local ip=$(grep "^${u}:" /etc/wibutunnel/limit_ip.db 2>/dev/null | cut -d: -f2)
-        local bw=$(grep "^${u}:" /etc/wibutunnel/limit_bw.db 2>/dev/null | cut -d: -f2)
+        local ip=$(grep "^${u}:" /etc/nexustunnel/limit_ip.db 2>/dev/null | cut -d: -f2)
+        local bw=$(grep "^${u}:" /etc/nexustunnel/limit_bw.db 2>/dev/null | cut -d: -f2)
         [[ -z "$ip" || "$ip" == "0" ]] && ip="Bebas" || ip="${ip} IP"
         [[ -z "$bw" || "$bw" == "0" ]] && bw="Unl" || bw="${bw} GB"
         echo "IP: ${ip} | BW: ${bw}"
@@ -555,15 +555,15 @@ backup_vps() {
         etc/xray/vless_exp.conf \
         etc/xray/vmess_exp.conf \
         etc/xray/trojan_exp.conf \
-        etc/wibutunnel/limit_ip.db \
-        etc/wibutunnel/limit_bw.db \
-        etc/wibutunnel/locked_users.db \
-        etc/wibutunnel/user_usage.db \
+        etc/nexustunnel/limit_ip.db \
+        etc/nexustunnel/limit_bw.db \
+        etc/nexustunnel/locked_users.db \
+        etc/nexustunnel/user_usage.db \
         etc/xray/domain 2>/dev/null
     
     if [[ -f "$backup_file" ]]; then
         local tgl=$(date "+%Y-%m-%d %H:%M:%S")
-        local caption=$(echo -e "📦 <b>Backup Wibutunnel VPS</b>\n🗓 Tanggal: <code>${tgl}</code>\n\n<i>Mengunggah dan membuat File ID...</i>")
+        local caption=$(echo -e "📦 <b>Backup Nexustunnel VPS</b>\n🗓 Tanggal: <code>${tgl}</code>\n\n<i>Mengunggah dan membuat File ID...</i>")
         local response=$(curl -s --max-time 60 -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendDocument" \
             -F "chat_id=${target_id}" \
             -F "document=@${backup_file}" \
@@ -574,7 +574,7 @@ backup_vps() {
         local msg_id=$(echo "$response" | jq -r '.result.message_id // empty')
         
         if [[ -n "$file_id" && -n "$msg_id" && "$msg_id" != "null" ]]; then
-            local new_caption=$(echo -e "📦 <b>Backup Wibutunnel VPS</b>\n🗓 Tanggal: <code>${tgl}</code>\n\n🔑 <b>DATA RESTORE:</b>\n<code>${file_id}</code>\n\n🔐 <b>Password:</b> CHAT ID Anda")
+            local new_caption=$(echo -e "📦 <b>Backup Nexustunnel VPS</b>\n🗓 Tanggal: <code>${tgl}</code>\n\n🔑 <b>DATA RESTORE:</b>\n<code>${file_id}</code>\n\n🔐 <b>Password:</b> CHAT ID Anda")
             curl -s --max-time 15 -X POST "https://api.telegram.org/bot${BOT_TOKEN}/editMessageCaption" \
                 -F "chat_id=${target_id}" \
                 -F "message_id=${msg_id}" \
@@ -628,8 +628,8 @@ detail_account() {
     fi
 
     local domain=$(cat /etc/xray/domain 2>/dev/null)
-    local limit_ip=$(grep "^${user}:" /etc/wibutunnel/limit_ip.db 2>/dev/null | cut -d: -f2)
-    local limit_bw=$(grep "^${user}:" /etc/wibutunnel/limit_bw.db 2>/dev/null | cut -d: -f2)
+    local limit_ip=$(grep "^${user}:" /etc/nexustunnel/limit_ip.db 2>/dev/null | cut -d: -f2)
+    local limit_bw=$(grep "^${user}:" /etc/nexustunnel/limit_bw.db 2>/dev/null | cut -d: -f2)
     
     [[ -z "$limit_ip" || "$limit_ip" -eq 0 ]] && limit_ip="Bebas" || limit_ip="${limit_ip} IP"
     [[ -z "$limit_bw" || "$limit_bw" -eq 0 ]] && limit_bw="Unlimited" || limit_bw="${limit_bw} GB"
@@ -733,7 +733,7 @@ check_login() {
 show_main_menu() {
     local target="$1"
     local msg_id="$2"
-    local text="━━━━━━━━━━━━━━━━━━━━\n 🤖 <b>WIBUTUNNEL PANEL BOT</b>\n━━━━━━━━━━━━━━━━━━━━\n\nSelamat datang di Panel Kendali VPS. Silakan pilih menu di bawah ini:"
+    local text="━━━━━━━━━━━━━━━━━━━━\n 🤖 <b>NEXUSTUNNEL PANEL BOT</b>\n━━━━━━━━━━━━━━━━━━━━\n\nSelamat datang di Panel Kendali VPS. Silakan pilih menu di bawah ini:"
     
     kb='{"inline_keyboard":['
     kb+='[{"text":"🔹 VLESS","callback_data":"menu_vless"},{"text":"🔸 VMESS","callback_data":"menu_vmess"}],'
@@ -824,7 +824,7 @@ if [[ -n "$CB_ID" ]]; then
             action=$(echo "$DATA" | cut -d'_' -f2)
             proto=$(echo "$DATA" | cut -d'_' -f3)
             
-            rm -f "/etc/wibutunnel/tmp/bot_state_${SENDER_ID}"
+            rm -f "/etc/nexustunnel/tmp/bot_state_${SENDER_ID}"
             
             case "$action" in
                 trial)
@@ -833,21 +833,21 @@ if [[ -n "$CB_ID" ]]; then
                 list) list_account "$proto" ;;
                 login) check_login "$proto" ;;
                 lock)
-                    rm -f "/etc/wibutunnel/tmp/bot_state_${SENDER_ID}"
-                    echo "LOCK:${proto}" > "/etc/wibutunnel/tmp/bot_state_${SENDER_ID}"
+                    rm -f "/etc/nexustunnel/tmp/bot_state_${SENDER_ID}"
+                    echo "LOCK:${proto}" > "/etc/nexustunnel/tmp/bot_state_${SENDER_ID}"
                     text="🔒 <b>LOCK USER [${proto}]</b>\n\nKirim username yang ingin di-lock:\nContoh: <code>budi123</code>"
                     kb='{"inline_keyboard":[[{"text":"❌ Batal","callback_data":"menu_'${proto,,}'"}]]}'
                     send_msg "$text" "$kb"
                     ;;
                 unlock)
-                    rm -f "/etc/wibutunnel/tmp/bot_state_${SENDER_ID}"
-                    echo "UNLOCK:${proto}" > "/etc/wibutunnel/tmp/bot_state_${SENDER_ID}"
+                    rm -f "/etc/nexustunnel/tmp/bot_state_${SENDER_ID}"
+                    echo "UNLOCK:${proto}" > "/etc/nexustunnel/tmp/bot_state_${SENDER_ID}"
                     text="🔓 <b>UNLOCK USER [${proto}]</b>\n\nKirim username yang ingin di-unlock:\nContoh: <code>budi123</code>"
                     kb='{"inline_keyboard":[[{"text":"❌ Batal","callback_data":"menu_'${proto,,}'"}]]}'
                     send_msg "$text" "$kb"
                     ;;
                 trafik) 
-                    if [[ -s "/etc/wibutunnel/user_usage.db" ]]; then
+                    if [[ -s "/etc/nexustunnel/user_usage.db" ]]; then
                         TRF_MSG="📊 <b>TOP 10 PEMAKAIAN QUOTA</b>\n━━━━━━━━━━━━━━━━━━━━\n"
                         idx=1
                         while IFS=":" read -r bytes usr; do
@@ -859,7 +859,7 @@ if [[ -n "$CB_ID" ]]; then
                             TRF_MSG+="<b>${idx}.</b> <code>${usr}</code> [${proto_r}] : ${vol}\n"
                             ((idx++))
                             [[ $idx -gt 10 ]] && break
-                        done < <(awk -F':' '{ if ($1 ~ /^(vless|vmess|trojan)-(ws|grpc)-(tls|ntls)$/ || $1 ~ /^(vless|vmess|trojan)-grpc$/ || $1 == "api" || $1 == "direct" || $1 == "blocked") next; down=($2=="null"||$2=="")?0:$2; up=($3=="null"||$3=="")?0:$3; printf "%.0f:%s\n", (down+up), $1 }' /etc/wibutunnel/user_usage.db 2>/dev/null | sort -t: -k1 -nr)
+                        done < <(awk -F':' '{ if ($1 ~ /^(vless|vmess|trojan)-(ws|grpc)-(tls|ntls)$/ || $1 ~ /^(vless|vmess|trojan)-grpc$/ || $1 == "api" || $1 == "direct" || $1 == "blocked") next; down=($2=="null"||$2=="")?0:$2; up=($3=="null"||$3=="")?0:$3; printf "%.0f:%s\n", (down+up), $1 }' /etc/nexustunnel/user_usage.db 2>/dev/null | sort -t: -k1 -nr)
                         TRF_MSG+="━━━━━━━━━━━━━━━━━━━━"
                         kb='{"inline_keyboard":[[{"text":"🔙 Back to SYSTEM Menu","callback_data":"menu_system"}]]}'
                         send_msg "$TRF_MSG" "$kb"
@@ -882,7 +882,7 @@ if [[ -n "$CB_ID" ]]; then
                     backup_vps
                     ;;
                 *)
-                    echo "$action $proto" > "/etc/wibutunnel/tmp/bot_state_${SENDER_ID}"
+                    echo "$action $proto" > "/etc/nexustunnel/tmp/bot_state_${SENDER_ID}"
                     ask_input "$SENDER_ID" "$action" "$proto"
                     ;;
             esac
@@ -896,9 +896,9 @@ else
         TEXT="${TEXT//$'\r'/}"
         
         if is_admin "$SENDER_ID"; then
-            if [[ -f "/etc/wibutunnel/tmp/bot_state_${SENDER_ID}" && ! "$TEXT" =~ ^/ ]]; then
-                read -r action proto < "/etc/wibutunnel/tmp/bot_state_${SENDER_ID}"
-                rm -f "/etc/wibutunnel/tmp/bot_state_${SENDER_ID}"
+            if [[ -f "/etc/nexustunnel/tmp/bot_state_${SENDER_ID}" && ! "$TEXT" =~ ^/ ]]; then
+                read -r action proto < "/etc/nexustunnel/tmp/bot_state_${SENDER_ID}"
+                rm -f "/etc/nexustunnel/tmp/bot_state_${SENDER_ID}"
                 
                 case "$action" in
                     create)
@@ -957,7 +957,7 @@ else
                         ;;
                 esac
             else
-                rm -f "/etc/wibutunnel/tmp/bot_state_${SENDER_ID}"
+                rm -f "/etc/nexustunnel/tmp/bot_state_${SENDER_ID}"
                 case "$TEXT" in
                     /start|/menu)
                         show_main_menu "$SENDER_ID" ""

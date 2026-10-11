@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==========================================
-# WIBU TUNNELING - common.sh (v4.0 KURUMI)
+# NEXUS TUNNELING - common.sh (v4.0 NEXUS)
 # [PATCH] flock xray config, MYIP guard, escape fix, safe helpers
 # ==========================================
 
@@ -19,15 +19,15 @@ readonly BYTES_PER_GB=1073741824
 readonly LOG_MAX_SIZE=41943040  # 40MB
 readonly XRAY_API_PORT=10085
 readonly DEFAULT_LOCK_DURATION=15  # minutes
-mkdir -p /etc/wibutunnel/tmp
-chmod 700 /etc/wibutunnel/tmp
+mkdir -p /etc/nexustunnel/tmp
+chmod 700 /etc/nexustunnel/tmp
 
 XRAY_CONFIG="/usr/local/etc/xray/config.json"
-XRAY_LOCK="/etc/wibutunnel/tmp/xray_config.lock"
+XRAY_LOCK="/etc/nexustunnel/tmp/xray_config.lock"
 
 # [FIX] Safe bot.conf parser - prevents command injection
 load_bot_config() {
-    local conf="/etc/wibutunnel/bot.conf"
+    local conf="/etc/nexustunnel/bot.conf"
     [[ ! -f "$conf" ]] && return 1
     BOT_TOKEN=$(grep '^BOT_TOKEN=' "$conf" 2>/dev/null | cut -d= -f2- | tr -d '"' | tr -d "'")
     CHAT_ID=$(grep '^CHAT_ID=' "$conf" 2>/dev/null | cut -d= -f2- | tr -d '"' | tr -d "'")
@@ -48,7 +48,7 @@ safe_jq_edit() {
     local filter="$1"
     local src="${XRAY_CONFIG}"
     local tmp
-    tmp=$(mktemp /etc/wibutunnel/tmp/xray_edit.XXXXXX.json)
+    tmp=$(mktemp /etc/nexustunnel/tmp/xray_edit.XXXXXX.json)
     (
         flock -w 30 200 || { echo "[ERROR] flock timeout on xray config" >&2; rm -f "$tmp"; return 1; }
         if jq "$filter" "$src" > "$tmp" 2>/dev/null && [ -s "$tmp" ]; then
@@ -65,7 +65,7 @@ safe_jq_edit() {
 safe_jq_edit_args() {
     local src="$XRAY_CONFIG"
     local tmp
-    tmp=$(mktemp /etc/wibutunnel/tmp/xray_edit.XXXXXX.json)
+    tmp=$(mktemp /etc/nexustunnel/tmp/xray_edit.XXXXXX.json)
     (
         flock -w 30 200 || { echo "[ERROR] flock timeout on xray config" >&2; rm -f "$tmp"; return 1; }
         if jq "$@" "$src" > "$tmp" 2>/dev/null && [ -s "$tmp" ]; then
@@ -90,7 +90,7 @@ safe_sed_delete() {
 }
 
 check_license() {
-    local CACHE_FILE="/etc/wibutunnel/tmp/wibu_license.cache"
+    local CACHE_FILE="/etc/nexustunnel/tmp/nexus_license.cache"
     local CACHE_TTL=3600
     local CURRENT_TIME=$(date +%s)
 

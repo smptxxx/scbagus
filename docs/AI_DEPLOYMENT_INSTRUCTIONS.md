@@ -1,6 +1,6 @@
-# Wibutunnel - AI Deployment Instructions
+# Nexustunnel - AI Deployment Instructions
 
-This document provides instructions for an AI agent to deploy the wibutunnel VPS script.
+This document provides instructions for an AI agent to deploy the nexustunnel VPS script.
 
 ## For AI Agents
 1. Transfer the entire source code to the target Linux VPS (Debian/Ubuntu recommended).
