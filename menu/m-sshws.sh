@@ -66,21 +66,28 @@ add_user() {
     echo -e "  ${WHITE}━━━━━ INFO SSH WEBSOCKET ━━━━━${NC}"
     echo -e "  ${CYAN}SSL (443 TLS):${NC}"
     echo -e "    Host      : $DOMAIN"
+    echo -e "    IP        : $IP"
     echo -e "    Port      : 443"
     echo -e "    Path      : /sshws"
     echo -e "    Type      : WebSocket TLS (Dropbear 2019.78)"
     echo -e "  ${CYAN}NON-SSL (80 NTLS):${NC}"
-    echo -e "    Host      : $IP"
+    echo -e "    Host      : $DOMAIN / $IP"
     echo -e "    Port      : 80"
     echo -e "    Path      : /sshws"
     echo -e "  ${CYAN}Login:${NC}"
     echo -e "    Username  : $U"
     echo -e "    Password  : $P"
     echo -e "    Expired   : $EXP (sisa $(expired_days $EXP) hari)"
+    echo -e "  ${CYAN}Server Detail:${NC}"
+    echo -e "    OpenSSH   : 22 (port 22)"
+    echo -e "    Dropbear  : 2019.78 (port 2221 via WS)"
+    echo -e "    UDPGW     : 7100-7300"
+    echo -e "  ${CYAN}Payload (HTTP Injector / NetMod):${NC}"
+    echo -e "    GET /sshws HTTP/1.1[crlf]Host: $DOMAIN[crlf]Connection: Upgrade[crlf]Upgrade: websocket[crlf][crlf]"
     echo -e "  ${CYAN}Config Client (WStunnel v10):${NC}"
     echo -e "    wstunnel client -P /sshws wss://$DOMAIN:443 -L tcp://1080:127.0.0.1:2221"
     echo -e "    → lalu konek SSH ke 127.0.0.1:1080 dengan user $U"
-    echo -e "  ${CYAN}App Support:${NC} NetMod, WStunnel, HTTP Custom (mode WStunnel)"
+    echo -e "  ${CYAN}App Support:${NC} HTTP Injector, NetMod, WStunnel, HTTP Custom"
     echo -e "${LINE}"
     read -p "Tekan Enter..."
 }
@@ -111,7 +118,15 @@ trial_user() {
     useradd -m -s /bin/bash "$U" 2>/dev/null
     echo "$U:$P" | chpasswd
     echo "${U}:${P}:$(date -d '+1 hours' '+%Y-%m-%d %H:%M')" >> "$DB_SSHWS"
-    echo -e "${GREEN}✓ Trial 1 jam dibuat: $U / $P${NC}"; sleep 1
+    echo -e "${GREEN}✓ Trial 1 jam dibuat!${NC}"
+    echo -e "${LINE}"
+    echo -e "  ${CYAN}SSL (443 TLS):${NC} $DOMAIN :443 /sshws (WStunnel, Dropbear 2019.78)"
+    echo -e "  ${CYAN}NON-SSL (80)  :${NC} $IP :80 /sshws"
+    echo -e "  ${CYAN}Username  :${NC} $U"
+    echo -e "  ${CYAN}Password  :${NC} $P"
+    echo -e "  ${CYAN}Expired   :${NC} $(date -d '+1 hours' '+%Y-%m-%d %H:%M') (1 jam)"
+    echo -e "${LINE}"
+    read -p "Tekan Enter..."
 }
 
 check_login() {
