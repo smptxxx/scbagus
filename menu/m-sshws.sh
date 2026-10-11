@@ -63,12 +63,24 @@ add_user() {
     echo "${U}:${P}:${EXP}" >> "$DB_SSHWS"
     echo -e "${GREEN}✓ User SSH-WS dibuat!${NC}"
     echo -e "${LINE}"
-    echo -e "  ${WHITE}INFO SSH WEBSOCKET${NC}"
-    echo -e "  ${CYAN}Host       :${NC} $DOMAIN (SSL 443) / $IP (port 80)"
-    echo -e "  ${CYAN}Path       :${NC} /sshws"
-    echo -e "  ${CYAN}User/Pass  :${NC} $U / $P"
-    echo -e "  ${CYAN}Expired    :${NC} $EXP ($(expired_days $EXP) hari)"
-    echo -e "  ${CYAN}Ports      :${NC} 443 TLS • 80 NTLS • Dropbear 2019.78"
+    echo -e "  ${WHITE}━━━━━ INFO SSH WEBSOCKET ━━━━━${NC}"
+    echo -e "  ${CYAN}SSL (443 TLS):${NC}"
+    echo -e "    Host      : $DOMAIN"
+    echo -e "    Port      : 443"
+    echo -e "    Path      : /sshws"
+    echo -e "    Type      : WebSocket TLS (Dropbear 2019.78)"
+    echo -e "  ${CYAN}NON-SSL (80 NTLS):${NC}"
+    echo -e "    Host      : $IP"
+    echo -e "    Port      : 80"
+    echo -e "    Path      : /sshws"
+    echo -e "  ${CYAN}Login:${NC}"
+    echo -e "    Username  : $U"
+    echo -e "    Password  : $P"
+    echo -e "    Expired   : $EXP (sisa $(expired_days $EXP) hari)"
+    echo -e "  ${CYAN}Config Client (WStunnel v10):${NC}"
+    echo -e "    wstunnel client -P /sshws wss://$DOMAIN:443 -L tcp://1080:127.0.0.1:2221"
+    echo -e "    → lalu konek SSH ke 127.0.0.1:1080 dengan user $U"
+    echo -e "  ${CYAN}App Support:${NC} NetMod, WStunnel, HTTP Custom (mode WStunnel)"
     echo -e "${LINE}"
     read -p "Tekan Enter..."
 }
@@ -90,7 +102,7 @@ renew_user() {
     local pass=$(echo "$line" | cut -d: -f2)
     local NEWEXP=$(add_days "$D")
     sed -i "s|^${U}:.*|${U}:${pass}:${NEWEXP}|" "$DB_SSHWS"
-    echo -e "${GREEN}✓ $U diperpanjang $D hari → $NEWEXP${NC}"; sleep 1
+    echo -e "${GREEN}✓ $U diperpanjang $D hari → $NEWEXP (sisa $(expired_days $NEWEXP) hari)${NC}"; sleep 1
 }
 
 trial_user() {
