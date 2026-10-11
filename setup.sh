@@ -436,6 +436,74 @@ backend webhook_server
     server local_webhook 127.0.0.1:8443
 HFEOF
 
+# ─── SSH WEBSOCKET (SSH-WS): Dropbear 2019.78 + WStunnel, path /sshws di 80 & 443 ───
+echo -e "\e[1;36m[+] Installing SSH-WS (Dropbear 2019 + WStunnel)...\e[0m"
+mkdir -p /opt/ssh-ws /opt/dropbear2019 /etc/dropbear2019
+if [[ ! -x /opt/dropbear2019/bin/dropbear ]]; then
+    apt-get install -y build-essential >/dev/null 2>&1
+    DBCONF=$(curl -sS -L --max-time 15 https://matt.ucc.asn.au/dropbear/releases/ -o /dev/null -w "%{url_effective}" 2>/dev/null || true)
+    # mirror utama + fallback github mirror
+    curl -sS -L --max-time 60 -o /tmp/dropbear.tar.bz2 https://matt.ucc.asn.au/dropbear/releases/dropbear-2019.78.tar.bz2 || true
+    if [[ ! -s /tmp/dropbear.tar.bz2 ]]; then
+        curl -sS -L --max-time 60 -o /tmp/dropbear.tar.bz2 https://github.com/mkj/dropbear/archive/refs/tags/DROPBEAR_2019.78.tar.gz || true
+        [[ -s /tmp/dropbear.tar.bz2 ]] && mv /tmp/dropbear.tar.bz2 /tmp/dropbear.tar.gz && TARF=/tmp/dropbear.tar.gz || TARF=/tmp/dropbear.tar.bz2
+    else
+        TARF=/tmp/dropbear.tar.bz2
+    fi
+    if [[ -s "$TARF" ]]; then
+        mkdir -p /tmp/dbuild && tar -xf "$TARF" -C /tmp/dbuild --strip-components=1
+        (cd /tmp/dbuild && ./configure --prefix=/opt/dropbear2019 --disable-zlib >/dev/null 2>&1 && make PROGRAMS="dropbear dbclient dropbearkey scp" -j1 >/dev/null 2>&1 && make install >/dev/null 2>&1) || true
+        [[ -x /opt/dropbear2019/sbin/dropbear ]] && cp /opt/dropbear2019/sbin/dropbear /opt/dropbear2019/bin/ || true
+    fi
+    [[ -x /opt/dropbear2019/bin/dropbear ]] || apt-get install -y dropbear >/dev/null 2>&1 && cp /usr/sbin/dropbear /opt/dropbear2019/bin/ 2>/dev/null || true
+fi
+[[ -f /etc/dropbear2019/dropbear_rsa_host_key ]] || /opt/dropbear2019/bin/dropbearkey -t rsa -s 2048 -f /etc/dropbear2019/dropbear_rsa_host_key >/dev/null 2>&1
+
+# WStunnel v10 (pembawa WebSocket):
+ARCH=$(uname -m); [[ "$ARCH" == "x86_64" ]] && WSARCH="amd64" || WSARCH="arm64"
+curl -sS -L --max-time 90 -o /tmp/wstunnel.tgz "https://github.com/erebe/wstunnel/releases/download/v10.1.5/wstunnel_10.1.5_linux_${WSARCH}.tar.gz"
+tar -xzf /tmp/wstunnel.tgz -C /opt/ssh-ws wstunnel && mv /opt/ssh-ws/wstunnel /opt/ssh-ws/wstunnel10 && chmod +x /opt/ssh-ws/wstunnel10
+
+# Tambah route /sshws di haproxy.cfg yang barusan dibuat:
+python3 - <<PYEOF
+s = open('/etc/haproxy/haproxy.cfg').read()
+acl443 = "    acl is_sshws path_beg /sshws //sshws\n    acl is_sshws path_beg %2Fsshws\n    use_backend ssh_ws if is_sshws\n"
+if "is_sshws" not in s:
+    # sisip sebelum baris use_backend pertama di frontend ssl_sni
+    s = s.replace("    acl is_vless_grpc path_beg /vless/\n", acl443 + "    acl is_vless_grpc path_beg /vless/\n", 1)
+    # dan di frontend :80
+    s = s.replace("    acl is_vless_ntls path_beg /vless-ntls\n", acl443 + "    acl is_vless_ntls path_beg /vless-ntls\n", 1)
+    s = s.replace("backend webhook_server\n", "backend ssh_ws\n    mode http\n    server local_wstunnel 127.0.0.1:2222\n\nbackend webhook_server\n", 1)
+    open('/etc/haproxy/haproxy.cfg','w').write(s)
+PYEOF
+
+cat <<'WSUNITEOF' > /etc/systemd/system/dropbear-ws.service
+[Unit]
+Description=Dropbear 2019.78 for SSH-WS (port 2221 local)
+After=network.target
+[Service]
+ExecStart=/opt/dropbear2019/bin/dropbear -F -E -p 127.0.0.1:2221 -P /run/dropbear-ws.pid -r /etc/dropbear2019/dropbear_rsa_host_key
+Restart=always
+RestartSec=3
+[Install]
+WantedBy=multi-user.target
+WSUNITEOF
+
+cat <<'WSUNITEOF' > /etc/systemd/system/wstunnel-ws.service
+[Unit]
+Description=WStunnel WS server for SSH-WS (port 2222 local, path /sshws)
+After=network.target
+[Service]
+ExecStart=/opt/ssh-ws/wstunnel10 server ws://127.0.0.1:2222 --restrict-to 127.0.0.1:2221
+Restart=always
+RestartSec=3
+[Install]
+WantedBy=multi-user.target
+WSUNITEOF
+
+systemctl daemon-reload
+systemctl enable --now dropbear-ws wstunnel-ws
+
 # Bypass GitHub 429 Rate Limit menggunakan GHProxy
 GITHUB_RAW="https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main"
 
